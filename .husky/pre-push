@@ -1,0 +1,5 @@
+# ENG-030/032: tipos, lint e testes antes do push.
+# Binários locais (node_modules/.bin está no PATH que o husky prepara).
+tsc -p tsconfig.json --noEmit
+eslint .
+node --test "src/**/*.test.ts"

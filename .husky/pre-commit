@@ -1,0 +1,2 @@
+# Binários locais: o husky põe node_modules/.bin no PATH (não depende do shim global do pnpm).
+lint-staged

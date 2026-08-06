@@ -1,0 +1,6 @@
+# Ficheiros de texto normalizados em LF no repositório (os hooks do husky são shell).
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.webp binary
+*.pdf binary

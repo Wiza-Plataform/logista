@@ -1,0 +1,26 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      # pnpm 11 (de packageManager) + Node, num só passo
+      - uses: pnpm/setup@v2
+        with: { runtime: node@22, cache: true, install: false }
+      # pnpm ci = pnpm clean + install --frozen-lockfile
+      - run: pnpm ci
+      # SEC-050: falha em vulnerabilidade alta/crítica
+      - run: pnpm audit --audit-level high
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
