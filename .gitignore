@@ -16,6 +16,8 @@ storybook-static/
 *.tsbuildinfo
 .eslintcache
 .prettiercache
+# Gerado pelo `next build`/`next dev` a cada arranque.
+next-env.d.ts
 
 # --- Testes -----------------------------------------------------------------
 coverage/

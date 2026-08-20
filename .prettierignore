@@ -1,0 +1,8 @@
+# O lockfile é do pnpm, que o reescreve no seu próprio estilo a cada install. Casa com o
+# glob `*.yaml` do lint-staged, e sem esta linha oscilaria entre dois formatos a cada commit.
+pnpm-lock.yaml
+
+.next/
+dist/
+coverage/
+next-env.d.ts

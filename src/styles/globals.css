@@ -1,0 +1,206 @@
+/* ============================================================
+   WIZA — lojista · folha global
+   Tokens portados de docs/wiza-ds.css (ENG: nada é partilhado entre repos — isto é uma cópia
+   deliberada, não um import). O shadcn não traz paleta própria: os nomes semânticos dele
+   (background, primary, muted…) são apenas uma ponte para os tokens da WIZA, definida no
+   bloco `@theme inline` mais abaixo. Não acrescentar cores aqui.
+   ============================================================ */
+
+@import 'tailwindcss';
+
+/* O wiza-ds.css comuta o tema por `[data-theme]` e assume escuro por omissão; o shadcn assume a
+   classe `.dark`. Esta linha reconcilia os dois: `dark:` passa a seguir o atributo. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ---------- MARCA (independente do tema) ---------- */
+:root {
+  --verde-primario: #022c0e; /* texto sobre lima */
+  --verde-floresta: #174b26;
+  --verde-acinzentado: #3f5e44;
+  --lima-oliva: #a7be52; /* acento suave */
+  --lima: #c0d163; /* acento principal */
+  --lima-clara: #eaf67e; /* acento vivo */
+
+  /* avatares / séries de gráfico */
+  --av-red: #e0563e;
+  --av-green: #2e9e5b;
+  --av-purple: #7c5cdb;
+  --av-teal: #1fa37a;
+  --av-orange: #d98a2b;
+  --av-blue: #3b7dd8;
+
+  --sidebar-w: 212px;
+  --radius: 14px; /* cartões, painéis */
+  --radius-sm: 10px; /* botões, campos, chips */
+  --radius-pill: 999px;
+
+  --fs-display: 27px;
+  --fs-h1: 24px;
+  --fs-body: 13.5px; /* base */
+  --fs-sm: 12.5px;
+  --fs-xs: 11px;
+  --fs-label: 10.5px;
+}
+
+/* ---------- TEMA ESCURO (omissão) ---------- */
+:root,
+:root[data-theme='dark'] {
+  --bg: #0d0f13;
+  --sidebar: #0b0d11;
+  --surface: #15181e;
+  --surface-2: #1b1f26;
+  --border: #262b33;
+  --border-soft: #1f242b;
+  --txt: #eaecef;
+  --txt-dim: #8a9099;
+  --txt-faint: #5b616b;
+  --chip: #22272f;
+  --hover: #242a32;
+  --thead-bg: #1b1f26;
+  --active-bg: #181d14;
+  --active-fg: var(--lima-clara);
+  --active-ring: rgba(192, 209, 99, 0.22);
+  --accent-text: var(--lima-oliva);
+  --shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+  --danger: #e0563e;
+  --trend-bg: rgba(192, 209, 99, 0.16);
+  --trend-fg: var(--lima-clara);
+  --hl-grad: linear-gradient(165deg, #1a2114, #15181a);
+  --hl-border: rgba(192, 209, 99, 0.45);
+  --up-grad: linear-gradient(155deg, #1d2128, #15181d);
+  --up-h4: var(--lima-clara);
+  --brand-grad: linear-gradient(120deg, var(--lima-clara), var(--lima-oliva));
+
+  /* estados de pedido */
+  --st-wait-bg: rgba(217, 160, 55, 0.16);
+  --st-wait-fg: #e0b45e;
+  --st-paid-bg: rgba(192, 209, 99, 0.16);
+  --st-paid-fg: #c0d163;
+  --st-ship-bg: rgba(76, 140, 224, 0.16);
+  --st-ship-fg: #76a8e6;
+  --st-done-bg: rgba(138, 144, 153, 0.15);
+  --st-done-fg: #aeb4bd;
+  --st-cancel-bg: rgba(224, 86, 62, 0.16);
+  --st-cancel-fg: #e8836f;
+}
+
+/* ---------- TEMA CLARO ---------- */
+:root[data-theme='light'] {
+  --bg: #f3f4f5;
+  --sidebar: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f4f5f6;
+  --border: #e4e6e9;
+  --border-soft: #ecedef;
+  --txt: #16241b;
+  --txt-dim: #5e6b62;
+  --txt-faint: #97a09a;
+  --chip: #f0f2f4;
+  --hover: #edeff1;
+  --thead-bg: #f8f9fa;
+  --active-bg: #edf3d6;
+  --active-fg: #2e4012;
+  --active-ring: rgba(167, 190, 82, 0.55);
+  --accent-text: #4f6b33;
+  --shadow: 0 6px 22px rgba(2, 44, 14, 0.1);
+  --danger: #d2452c;
+  --trend-bg: #e9f2d4;
+  --trend-fg: #4d6b1f;
+  --hl-grad: linear-gradient(165deg, #fbfdee, #f1f7d6);
+  --hl-border: rgba(167, 190, 82, 0.6);
+  --up-grad: linear-gradient(155deg, #f5f8e8, #edf1df);
+  --up-h4: #3c5821;
+  --brand-grad: linear-gradient(120deg, #3c5821, #5e7a33);
+
+  --st-wait-bg: #fbf1dc;
+  --st-wait-fg: #946a12;
+  --st-paid-bg: #eaf2d2;
+  --st-paid-fg: #4d6b1f;
+  --st-ship-bg: #e4eefb;
+  --st-ship-fg: #1f5ba8;
+  --st-done-bg: #eef0f2;
+  --st-done-fg: #5e6b62;
+  --st-cancel-bg: #fbe6e1;
+  --st-cancel-fg: #b23c26;
+}
+
+/* ============================================================
+   PONTE shadcn → WIZA
+   Cada nome à esquerda é vocabulário do shadcn; à direita está o token da WIZA que o alimenta.
+   Nenhum valor literal novo — a única excepção é o #fff do texto sobre `danger`, que é o que o
+   próprio wiza-ds.css usa em `.btn-danger`.
+   ============================================================ */
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--txt);
+
+  --color-card: var(--surface);
+  --color-card-foreground: var(--txt);
+  --color-popover: var(--surface-2);
+  --color-popover-foreground: var(--txt);
+
+  /* «primary» do shadcn é o acento da marca: lima com verde profundo por cima */
+  --color-primary: var(--lima);
+  --color-primary-foreground: var(--verde-primario);
+
+  --color-secondary: var(--chip);
+  --color-secondary-foreground: var(--txt);
+
+  --color-muted: var(--surface-2);
+  --color-muted-foreground: var(--txt-dim);
+
+  /* atenção: «accent» no shadcn é o realce de hover, não o acento da marca */
+  --color-accent: var(--hover);
+  --color-accent-foreground: var(--txt);
+
+  --color-destructive: var(--danger);
+  --color-destructive-foreground: #fff;
+
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--lima-oliva);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--txt);
+  --color-sidebar-primary: var(--lima);
+  --color-sidebar-primary-foreground: var(--verde-primario);
+  --color-sidebar-accent: var(--active-bg);
+  --color-sidebar-accent-foreground: var(--active-fg);
+  --color-sidebar-border: var(--border-soft);
+  --color-sidebar-ring: var(--lima-oliva);
+
+  /* séries de gráfico: reaproveitam a paleta de avatares, para não inventar cores */
+  --color-chart-1: var(--lima);
+  --color-chart-2: var(--av-blue);
+  --color-chart-3: var(--av-purple);
+  --color-chart-4: var(--av-orange);
+  --color-chart-5: var(--av-teal);
+
+  /* 14px nos cartões, 10px nos controlos — a escada do shadcn dá exatamente os dois */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-pill: 999px;
+
+  --text-display: var(--fs-display);
+  --text-h1: var(--fs-h1);
+  --text-body: var(--fs-body);
+  --text-sm: var(--fs-sm);
+  --text-xs: var(--fs-xs);
+  --text-label: var(--fs-label);
+
+  --font-sans: var(--font-saira), system-ui, sans-serif;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-size: var(--fs-body);
+    -webkit-font-smoothing: antialiased;
+  }
+}

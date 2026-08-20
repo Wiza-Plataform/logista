@@ -66,4 +66,18 @@ export default tseslint.config(
     files: ['**/*.test.ts'],
     rules: { '@typescript-eslint/no-floating-promises': 'off' },
   },
+  {
+    // As duas pastas onde o CLI do shadcn escreve (ver aliases do components.json): código de
+    // que passamos a ser donos mas que não escrevemos à mão e que é reescrito a cada
+    // `shadcn add --overwrite`. As regras desligadas aqui são de estilo e tamanho, não de
+    // segurança de tipos — `no-explicit-any`, `no-floating-promises` e as fronteiras continuam
+    // a valer. Código nosso vive fora destas pastas e fica sujeito ao conjunto completo.
+    files: ['src/shared/ui/**', 'src/shared/hooks/**'],
+    rules: {
+      'max-lines-per-function': 'off',
+      complexity: 'off',
+      '@typescript-eslint/no-confusing-void-expression': 'off',
+      '@typescript-eslint/restrict-template-expressions': 'off',
+    },
+  },
 );

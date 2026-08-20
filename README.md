@@ -24,4 +24,4 @@ A API tem de estar a correr (repo `api`, por omissão em `http://localhost:3000`
 | `pnpm typecheck` | `tsc --noEmit`                                  |
 | `pnpm test`      | testes                                          |
 
-Invariantes de domínio, papéis e design: [`../platform/CLAUDE.md`](../platform/CLAUDE.md).
+Invariantes de domínio, papéis e design: [`../CLAUDE.md`](../CLAUDE.md).

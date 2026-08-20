@@ -1,0 +1,28 @@
+# WIZA — dashboard do lojista · ambiente de desenvolvimento deste repo.
+#
+# Autónomo por construção: sobe só este dashboard. A API vive no repo `api` e corre à parte —
+# é alcançada por API_BASE_URL, nunca por dependência de compose entre repos.
+#
+#   docker compose up            # http://localhost:3002
+#   docker compose run --rm lojista pnpm test
+services:
+  lojista:
+    image: node:22-alpine
+    working_dir: /app
+    # corepack ativa o pnpm 11.20.0 fixado em packageManager (ver ../CLAUDE.md).
+    command: sh -c "corepack enable && pnpm install && pnpm dev"
+    environment:
+      NODE_ENV: development
+      # host.docker.internal alcança a API a correr na máquina, fora deste compose.
+      API_BASE_URL: ${API_BASE_URL:-http://host.docker.internal:3000}
+      PORT: 3002
+    ports: ['3002:3002']
+    volumes:
+      - .:/app
+      # node_modules em volume próprio: os binários do container não são os do host (Windows).
+      - lojista_node_modules:/app/node_modules
+    extra_hosts: ['host.docker.internal:host-gateway']
+    init: true
+
+volumes:
+  lojista_node_modules:
