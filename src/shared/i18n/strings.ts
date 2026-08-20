@@ -1,0 +1,107 @@
+export const strings = {
+  app: {
+    name: 'WIZA',
+    dashboard: 'Painel do lojista',
+    description: 'Gestão da sua loja na WIZA — pedidos, produtos e pagamentos.',
+  },
+  nav: {
+    summary: 'Resumo',
+    toggleMenu: 'Alternar menu lateral',
+    mainMenu: 'Menu principal',
+  },
+  theme: {
+    toggle: 'Mudar tema',
+  },
+  summary: {
+    title: 'Resumo',
+    subtitle: 'Visão geral da sua loja.',
+  },
+  screenIndex: {
+    pageTitle: 'Wiza · Mapa do protótipo',
+    brand: 'Wiza',
+    subtitle: 'Mapa do protótipo · Angola e-commerce + Mercado',
+    intro:
+      'Todas as telas do protótipo WIZA, organizadas por área. Tudo partilha o mesmo design system e o tema (claro/escuro) é guardado entre telas.',
+    legendLive: 'Funcional',
+    legendSoon: 'Em desenvolvimento (sem mockup)',
+    open: 'Abrir',
+    soon: 'Em breve',
+    screen: 'tela',
+    screens: 'telas',
+    footer: 'Base partilhada dos tokens: wiza-ds.css, portado para este repo.',
+  },
+  apiErrors: {
+    offline: 'Não foi possível falar com a Wiza. Verifique a ligação e tente outra vez.',
+    unexpected: 'Algo correu mal. Tente outra vez daqui a pouco.',
+  },
+  vatRegimes: {
+    EXEMPT: 'Isento (regime simplificado)',
+    STANDARD: 'Regime geral (14%)',
+  },
+  brandColors: {
+    red: 'Vermelho',
+    green: 'Verde',
+    purple: 'Roxo',
+    teal: 'Turquesa',
+    orange: 'Laranja',
+    blue: 'Azul',
+  },
+  onboarding: {
+    pageTitle: 'Criar conta · Wiza',
+    brand: 'Wiza',
+
+    stepAccount: 'Conta',
+    stepTax: 'Fiscal',
+    stepBranding: 'Visual',
+
+    accountTitle: 'Criar a sua conta',
+    accountSubtitle: 'Comece pela identificação da loja. Provisionamos o seu endereço em segundos.',
+    tradeName: 'Nome comercial',
+    tradeNamePlaceholder: 'Ex.: Loja Kianda',
+    storeAddress: 'Endereço da loja',
+    subdomainPlaceholder: 'lojakianda',
+    domainSuffix: '.wiza.ao',
+    category: 'Categoria',
+    selectPlaceholder: 'Selecione…',
+    contactsGroup: 'Contactos',
+    mobile: 'Telemóvel / WhatsApp',
+    phonePrefix: '+244',
+    phonePlaceholder: '923 000 000',
+    email: 'Email',
+    emailPlaceholder: 'yara@lojakianda.ao',
+    contactHintStart: 'O ',
+    contactHintHighlight: 'WhatsApp',
+    contactHintEnd:
+      ' é obrigatório — é por aí que falará com os clientes. O email é usado para faturas.',
+    accountFooter: 'Ao continuar aceita os Termos da Wiza.',
+
+    taxTitle: 'Dados fiscais',
+    taxSubtitle: 'Necessários para emitir faturas. Pode alterá-los depois nas definições.',
+    nif: 'NIF',
+    nifPlaceholder: '5417080912',
+    businessType: 'Tipo de negócio',
+    vatRegime: 'Regime de IVA',
+
+    brandingTitle: 'Identidade visual',
+    brandingSubtitle: 'Dê cara à sua loja. Pode mudar tudo depois nas definições.',
+    primaryColor: 'Cor primária',
+    storeDescription: 'Descrição da loja',
+    storeDescriptionPlaceholder: 'Doces artesanais feitos em Luanda, entregas em 24h.',
+    brandingFooter:
+      'Conta para repasses, regras de entrega e publicação ficam nas definições da loja.',
+
+    previous: 'Anterior',
+    next: 'Próximo',
+    skip: 'Saltar',
+    finish: 'Concluir e entrar',
+    saving: 'A gravar…',
+
+    subdomainChecking: 'A verificar…',
+    subdomainAvailable: 'Endereço disponível.',
+    requiredField: 'Preencha este campo.',
+    invalidEmail: 'Escreva um email válido.',
+    subdomainTooShort: 'Use pelo menos 3 caracteres.',
+    nifTooShort: 'O NIF tem pelo menos 9 caracteres.',
+    phoneTooShort: 'Escreva o número com 9 dígitos.',
+  },
+} as const;
