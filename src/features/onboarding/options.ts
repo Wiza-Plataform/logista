@@ -6,7 +6,7 @@ export interface BrandColor {
   readonly label: string;
 }
 
-export const BRAND_COLORS: readonly BrandColor[] = [
+export const BRAND_COLORS: readonly [BrandColor, ...BrandColor[]] = [
   { hex: '#E0563E', token: '--av-red', label: strings.brandColors.red },
   { hex: '#2E9E5B', token: '--av-green', label: strings.brandColors.green },
   { hex: '#7C5CDB', token: '--av-purple', label: strings.brandColors.purple },
