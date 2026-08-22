@@ -1,33 +1,31 @@
 'use client';
 
-import type { ReferenceItem } from '@/shared/contracts/platform-config';
 import { strings } from '@/shared/i18n/strings';
 import { AlertMessage } from '@/shared/ui/field';
 
 import { AccountStep } from './account-step';
 import { BrandingStep } from './branding-step';
 import { WizardNavigation } from './navigation';
+import { ProductStep } from './product-step';
 import { StepBar } from './step-bar';
 import type { Step } from './step-bar';
 import { TaxStep } from './tax-step';
-import { LAST_STEP, useWizard } from './use-wizard';
+import { ACCOUNT_STEP, PRODUCT_STEP, TAX_STEP, useWizard } from './use-wizard';
+import { useProductDraft } from './use-product-draft';
 
 const STEPS: readonly Step[] = [
   { id: 'account', label: strings.onboarding.stepAccount },
   { id: 'tax', label: strings.onboarding.stepTax },
+  { id: 'product', label: strings.onboarding.stepProduct },
   { id: 'branding', label: strings.onboarding.stepBranding },
 ];
 
 const HEADINGS = [
   { title: strings.onboarding.accountTitle, subtitle: strings.onboarding.accountSubtitle },
   { title: strings.onboarding.taxTitle, subtitle: strings.onboarding.taxSubtitle },
+  { title: strings.onboarding.productTitle, subtitle: strings.onboarding.productSubtitle },
   { title: strings.onboarding.brandingTitle, subtitle: strings.onboarding.brandingSubtitle },
 ];
-
-interface WizardProps {
-  categories: readonly ReferenceItem[];
-  businessTypes: readonly ReferenceItem[];
-}
 
 function Heading({ heading }: { heading: { title: string; subtitle: string } | undefined }) {
   if (heading === undefined) return null;
@@ -40,37 +38,52 @@ function Heading({ heading }: { heading: { title: string; subtitle: string } | u
   );
 }
 
+function Footer({ step }: { step: number }) {
+  const t = strings.onboarding;
+  const className = 'mt-4.5 text-center text-sm leading-[1.6] text-[var(--txt-faint)]';
+
+  if (step === ACCOUNT_STEP) return <p className={className}>{t.accountFooter}</p>;
+  if (step === TAX_STEP) return <p className={className}>{t.taxFooter}</p>;
+  if (step === PRODUCT_STEP) return <p className={className}>{t.productFooter}</p>;
+
+  return (
+    <p className={className}>
+      {t.brandingFooterStart}
+      <b className="font-semibold text-[var(--accent-text)]">{t.brandingFooterHighlight}</b>
+      {t.brandingFooterEnd}
+    </p>
+  );
+}
+
 function CurrentStep({
   wizard,
-  categories,
-  businessTypes,
-}: WizardProps & { wizard: ReturnType<typeof useWizard> }) {
-  if (wizard.step === 0) {
-    return (
-      <AccountStep
-        values={wizard.form}
-        categories={categories}
-        errors={wizard.errors}
-        onChange={wizard.setField}
-      />
-    );
+  product,
+}: {
+  wizard: ReturnType<typeof useWizard>;
+  product: ReturnType<typeof useProductDraft>;
+}) {
+  if (wizard.step === ACCOUNT_STEP) {
+    return <AccountStep values={wizard.form} errors={wizard.errors} onChange={wizard.setField} />;
   }
-  if (wizard.step === 1) {
+  if (wizard.step === TAX_STEP) {
+    return <TaxStep values={wizard.form} errors={wizard.errors} onChange={wizard.setField} />;
+  }
+  if (wizard.step === PRODUCT_STEP) {
     return (
-      <TaxStep
-        values={wizard.form}
-        businessTypes={businessTypes}
-        errors={wizard.errors}
-        onChange={wizard.setField}
+      <ProductStep
+        draft={product.draft}
+        onChange={product.setField}
+        onAddPhoto={product.addPhoto}
+        onRemovePhoto={product.removePhoto}
       />
     );
   }
   return <BrandingStep values={wizard.form} errors={wizard.errors} onChange={wizard.setField} />;
 }
 
-export function Wizard({ categories, businessTypes }: WizardProps) {
-  const t = strings.onboarding;
+export function Wizard() {
   const wizard = useWizard();
+  const product = useProductDraft();
 
   return (
     <>
@@ -79,11 +92,12 @@ export function Wizard({ categories, businessTypes }: WizardProps) {
 
       {wizard.alertMessage !== null && <AlertMessage text={wizard.alertMessage} />}
 
-      <CurrentStep wizard={wizard} categories={categories} businessTypes={businessTypes} />
+      <CurrentStep wizard={wizard} product={product} />
 
       <WizardNavigation
-        step={wizard.step}
-        lastStep={LAST_STEP}
+        canGoBack={wizard.canGoBack}
+        canSkip={wizard.canSkip}
+        isLastStep={wizard.isLastStep}
         isSaving={wizard.isSaving}
         onBack={wizard.goBack}
         onNext={wizard.goNext}
@@ -91,9 +105,7 @@ export function Wizard({ categories, businessTypes }: WizardProps) {
         onSkip={wizard.skip}
       />
 
-      <p className="mt-4.5 text-center text-sm leading-[1.6] text-[var(--txt-faint)]">
-        {wizard.step === LAST_STEP ? t.brandingFooter : t.accountFooter}
-      </p>
+      <Footer step={wizard.step} />
     </>
   );
 }

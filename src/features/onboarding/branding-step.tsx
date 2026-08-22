@@ -1,13 +1,14 @@
 'use client';
 
-import { strings } from '@/shared/i18n/strings';
-import { cn } from '@/shared/lib/utils';
-import { Field, FieldGroup, Textarea } from '@/shared/ui/field';
-import { Check } from '@/shared/ui/icons';
+import { useState } from 'react';
 
-import { BRAND_COLORS } from './options';
-import type { BrandColor } from './options';
+import { strings } from '@/shared/i18n/strings';
+import { Field, FieldGroup, FieldHint, Textarea } from '@/shared/ui/field';
+import { Picture, Plus } from '@/shared/ui/icons';
+
+import { ColorSwatches, tokenOfHex } from './color-swatches';
 import type { FieldMessages, StoreForm, StoreFormField } from './types';
+import { UploadSlot } from './upload-slot';
 
 export type BrandingValues = Pick<StoreForm, 'description' | 'primaryColor'>;
 
@@ -17,52 +18,71 @@ interface BrandingStepProps {
   onChange: <K extends StoreFormField>(field: K, value: StoreForm[K]) => void;
 }
 
-function Swatch({
-  color,
-  isSelected,
-  onSelect,
-}: {
-  color: BrandColor;
-  isSelected: boolean;
-  onSelect: () => void;
-}) {
+function fillOf(primaryColor: string): string | undefined {
+  const token = tokenOfHex(primaryColor);
+  return token === undefined ? undefined : `var(${token})`;
+}
+
+function LogoField({ primaryColor }: { primaryColor: string }) {
+  const t = strings.onboarding;
+  const [isFilled, setIsFilled] = useState(false);
+
   return (
-    <button
-      type="button"
-      aria-label={color.label}
-      aria-pressed={isSelected}
-      onClick={onSelect}
-      style={{ background: `var(${color.token})` }}
-      className={cn(
-        'grid size-11 place-items-center rounded-sm border-2 transition-transform duration-[120ms] hover:scale-[1.08] sm:size-9',
-        isSelected ? 'border-foreground' : 'border-transparent',
-      )}
-    >
-      {isSelected && <Check className="size-3.5 text-white" strokeWidth={3} />}
-    </button>
+    <Field label={t.logo} isGroup>
+      <div className="flex items-center gap-3.5">
+        <UploadSlot
+          isFilled={isFilled}
+          fill={fillOf(primaryColor)}
+          label={t.logoUpload}
+          className="size-16.5 shrink-0 rounded-[15px] border"
+          onToggle={() => {
+            setIsFilled(!isFilled);
+          }}
+        >
+          {isFilled ? (
+            <span className="font-[family-name:var(--font-sansita)] text-2xl text-white">K</span>
+          ) : (
+            <Plus className="size-5.5" strokeWidth={1.7} />
+          )}
+        </UploadSlot>
+
+        <div>
+          <div className="text-sm font-medium">{t.logoUpload}</div>
+          <FieldHint>{t.logoHint}</FieldHint>
+        </div>
+      </div>
+    </Field>
   );
 }
 
-function ColorPalette({
-  selected,
-  onSelect,
-}: {
-  selected: string;
-  onSelect: (hex: string) => void;
-}) {
+function BannerField({ primaryColor }: { primaryColor: string }) {
+  const t = strings.onboarding;
+  const [isFilled, setIsFilled] = useState(false);
+  const fill = fillOf(primaryColor);
+
   return (
-    <div className="flex flex-wrap gap-2.5">
-      {BRAND_COLORS.map((color) => (
-        <Swatch
-          key={color.hex}
-          color={color}
-          isSelected={selected === color.hex}
-          onSelect={() => {
-            onSelect(selected === color.hex ? '' : color.hex);
-          }}
-        />
-      ))}
-    </div>
+    <Field label={t.banner} isGroup>
+      <UploadSlot
+        isFilled={isFilled}
+        fill={
+          fill === undefined ? undefined : `linear-gradient(120deg, ${fill}, var(--lima-oliva))`
+        }
+        label={t.bannerUpload}
+        className="h-19.5 w-full rounded-[12px] border"
+        onToggle={() => {
+          setIsFilled(!isFilled);
+        }}
+      >
+        {isFilled ? (
+          <span className="text-sm font-semibold text-white">{t.bannerLoaded}</span>
+        ) : (
+          <>
+            <Picture className="size-5" strokeWidth={1.7} />
+            <span className="text-xs">{t.bannerUpload}</span>
+          </>
+        )}
+      </UploadSlot>
+    </Field>
   );
 }
 
@@ -71,8 +91,10 @@ export function BrandingStep({ values, errors, onChange }: BrandingStepProps) {
 
   return (
     <FieldGroup>
-      <Field label={t.primaryColor} error={errors.primaryColor}>
-        <ColorPalette
+      <LogoField primaryColor={values.primaryColor} />
+
+      <Field label={t.primaryColor} isGroup error={errors.primaryColor}>
+        <ColorSwatches
           selected={values.primaryColor}
           onSelect={(hex) => {
             onChange('primaryColor', hex);
@@ -90,6 +112,8 @@ export function BrandingStep({ values, errors, onChange }: BrandingStepProps) {
           }}
         />
       </Field>
+
+      <BannerField primaryColor={values.primaryColor} />
     </FieldGroup>
   );
 }

@@ -1,15 +1,4 @@
-import type { VatRegime } from '@/shared/contracts/store';
 import { strings } from '@/shared/i18n/strings';
-
-export interface VatRegimeOption {
-  readonly value: VatRegime;
-  readonly label: string;
-}
-
-export const VAT_REGIME_OPTIONS: readonly VatRegimeOption[] = [
-  { value: 'EXEMPT', label: strings.vatRegimes.EXEMPT },
-  { value: 'STANDARD', label: strings.vatRegimes.STANDARD },
-];
 
 export interface BrandColor {
   readonly hex: string;
@@ -25,3 +14,9 @@ export const BRAND_COLORS: readonly BrandColor[] = [
   { hex: '#D98A2B', token: '--av-orange', label: strings.brandColors.orange },
   { hex: '#3B7DD8', token: '--av-blue', label: strings.brandColors.blue },
 ];
+
+export const MAX_PRODUCT_PHOTOS = 8;
+
+export function nextPhotoToken(count: number): string {
+  return BRAND_COLORS[count % BRAND_COLORS.length]?.token ?? BRAND_COLORS[0].token;
+}

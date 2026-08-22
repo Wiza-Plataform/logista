@@ -1,14 +1,10 @@
 'use server';
 
 import type { CreatedStore, SubdomainAvailability } from '@/shared/contracts/store';
-import type {
-  CreateStoreRequest,
-  UpdateBrandingRequest,
-  UpdateFiscalIdentityRequest,
-} from '@/shared/contracts/store';
+import type { CreateStoreRequest, UpdateBrandingRequest } from '@/shared/contracts/store';
 import { strings } from '@/shared/i18n/strings';
 
-import { ApiError, checkSubdomain, createStore, saveBranding, saveFiscalIdentity } from './api';
+import { ApiError, checkSubdomain, createStore, saveBranding } from './api';
 import type { Result } from './types';
 
 function toFailure(error: unknown): Result<never> {
@@ -33,18 +29,6 @@ export async function createStoreAction(
 ): Promise<Result<CreatedStore>> {
   try {
     return { ok: true, data: await createStore(payload) };
-  } catch (error) {
-    return toFailure(error);
-  }
-}
-
-export async function saveFiscalIdentityAction(
-  storeUlid: string,
-  payload: UpdateFiscalIdentityRequest,
-): Promise<Result<null>> {
-  try {
-    await saveFiscalIdentity(storeUlid, payload);
-    return { ok: true, data: null };
   } catch (error) {
     return toFailure(error);
   }

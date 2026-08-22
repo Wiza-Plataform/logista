@@ -39,3 +39,12 @@ export function formatPhoneAO(value: string): string {
 export function isCompletePhoneAO(value: string): boolean {
   return toLocalPhoneAO(value).length === LOCAL_PHONE_LENGTH;
 }
+
+export function maskLocalPhoneAO(value: string): string {
+  const local = toLocalPhoneAO(value);
+  return (local.match(/\d{1,3}/g) ?? []).join(' ');
+}
+
+export function maskDigits(value: string, maxLength: number): string {
+  return onlyDigits(value).slice(0, maxLength);
+}

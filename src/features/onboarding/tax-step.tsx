@@ -1,95 +1,69 @@
 'use client';
 
-import type { ReferenceItem } from '@/shared/contracts/platform-config';
-import { vatRegimeSchema } from '@/shared/contracts/store';
+import { maskDigits } from '@/shared/i18n/format';
 import { strings } from '@/shared/i18n/strings';
-import { Field, FieldGroup, FieldPair, NativeSelect } from '@/shared/ui/field';
+import { Field, FieldGroup, FieldPair, FieldState } from '@/shared/ui/field';
 import { Input } from '@/shared/ui/input';
 
-import { VAT_REGIME_OPTIONS } from './options';
 import type { FieldMessages, StoreForm, StoreFormField } from './types';
+import { MAX_NIF_DIGITS, isNifComplete } from './validation';
 
-export type TaxValues = Pick<StoreForm, 'nif' | 'bizTypeUlid' | 'vatRegime'>;
+export type TaxValues = Pick<StoreForm, 'nif' | 'fiscalName'>;
 
 interface TaxStepProps {
   values: TaxValues;
-  businessTypes: readonly ReferenceItem[];
   errors: FieldMessages;
   onChange: <K extends StoreFormField>(field: K, value: StoreForm[K]) => void;
 }
 
-function BusinessTypeField({ values, businessTypes, errors, onChange }: TaxStepProps) {
+function NifField({ values, errors, onChange }: TaxStepProps) {
   const t = strings.onboarding;
+  const hasError = errors.nif !== undefined;
 
   return (
-    <Field label={t.businessType} error={errors.bizTypeUlid}>
-      <NativeSelect
-        value={values.bizTypeUlid}
-        aria-invalid={errors.bizTypeUlid !== undefined}
+    <Field label={t.nif} isRequired error={errors.nif}>
+      <Input
+        variant="form"
+        value={values.nif}
+        maxLength={MAX_NIF_DIGITS}
+        inputMode="numeric"
+        aria-invalid={hasError}
+        placeholder={t.nifPlaceholder}
+        className="tabular-nums"
         onChange={(event) => {
-          onChange('bizTypeUlid', event.target.value);
+          onChange('nif', maskDigits(event.target.value, MAX_NIF_DIGITS));
         }}
-      >
-        <option value="">{t.selectPlaceholder}</option>
-        {businessTypes.map((type) => (
-          <option key={type.ulid} value={type.ulid}>
-            {type.label}
-          </option>
-        ))}
-      </NativeSelect>
+      />
+      {!hasError && isNifComplete(values.nif) && <FieldState tone="positive" text={t.nifValid} />}
     </Field>
   );
 }
 
-function VatRegimeField({ values, errors, onChange }: Omit<TaxStepProps, 'businessTypes'>) {
+function FiscalNameField({ values, errors, onChange }: TaxStepProps) {
   const t = strings.onboarding;
 
   return (
-    <Field label={t.vatRegime} error={errors.vatRegime}>
-      <NativeSelect
-        value={values.vatRegime}
+    <Field label={t.fiscalName} isRequired error={errors.fiscalName}>
+      <Input
+        variant="form"
+        value={values.fiscalName}
+        maxLength={160}
+        aria-invalid={errors.fiscalName !== undefined}
+        placeholder={t.fiscalNamePlaceholder}
         onChange={(event) => {
-          onChange('vatRegime', vatRegimeSchema.catch('EXEMPT').parse(event.target.value));
+          onChange('fiscalName', event.target.value);
         }}
-      >
-        {VAT_REGIME_OPTIONS.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </NativeSelect>
+      />
     </Field>
   );
 }
 
-export function TaxStep({ values, businessTypes, errors, onChange }: TaxStepProps) {
-  const t = strings.onboarding;
-
+export function TaxStep({ values, errors, onChange }: TaxStepProps) {
   return (
     <FieldGroup>
-      <Field label={t.nif} isRequired error={errors.nif}>
-        <Input
-          variant="form"
-          value={values.nif}
-          maxLength={10}
-          inputMode="numeric"
-          aria-invalid={errors.nif !== undefined}
-          placeholder={t.nifPlaceholder}
-          className="tabular-nums"
-          onChange={(event) => {
-            onChange('nif', event.target.value);
-          }}
-        />
-      </Field>
-
       <FieldPair>
-        <BusinessTypeField
-          values={values}
-          businessTypes={businessTypes}
-          errors={errors}
-          onChange={onChange}
-        />
-        <VatRegimeField values={values} errors={errors} onChange={onChange} />
+        <NifField values={values} errors={errors} onChange={onChange} />
+        <FiscalNameField values={values} errors={errors} onChange={onChange} />
       </FieldPair>
     </FieldGroup>
   );

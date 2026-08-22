@@ -3,34 +3,27 @@
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
-import { createStoreAction, saveBrandingAction, saveFiscalIdentityAction } from './actions';
+import { createStoreAction, saveBrandingAction } from './actions';
 import { toFieldMessages } from './error-messages';
+import { deriveSubdomain } from './subdomain';
 import type { Result, StoreForm } from './types';
 import { useStoreForm } from './use-store-form';
 import { validateAccount, validateTax } from './validation';
 
-export const LAST_STEP = 2;
+export const ACCOUNT_STEP = 0;
+export const TAX_STEP = 1;
+export const PRODUCT_STEP = 2;
+export const LAST_STEP = 3;
 
-async function createStoreWithFiscalIdentity(form: StoreForm): Promise<Result<string>> {
-  const created = await createStoreAction({
+function createStoreFrom(form: StoreForm): Promise<Result<{ storeUlid: string }>> {
+  return createStoreAction({
     name: form.name.trim(),
-    subdomain: form.subdomain.trim(),
-    categoryUlid: form.categoryUlid,
+    subdomain: deriveSubdomain(form.name),
     nif: form.nif.trim(),
+    fiscalName: form.fiscalName.trim(),
     whatsappPhone: form.whatsappPhone.trim(),
     email: form.email.trim(),
   });
-  if (!created.ok) return created;
-
-  if (form.bizTypeUlid !== '') {
-    const fiscal = await saveFiscalIdentityAction(created.data.storeUlid, {
-      bizTypeUlid: form.bizTypeUlid,
-      vatRegime: form.vatRegime,
-    });
-    if (!fiscal.ok) return fiscal;
-  }
-
-  return { ok: true, data: created.data.storeUlid };
 }
 
 function saveBrandingOf(storeUlid: string, form: StoreForm): Promise<Result<null>> {
@@ -49,7 +42,7 @@ function hasNoBranding(form: StoreForm): boolean {
 export function useWizard() {
   const router = useRouter();
   const [isSaving, startSaving] = useTransition();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(ACCOUNT_STEP);
   const [storeUlid, setStoreUlid] = useState<string | null>(null);
   const formState = useStoreForm();
 
@@ -57,17 +50,17 @@ export function useWizard() {
     router.push('/');
   };
   const goToFirstStep = () => {
-    setStep(0);
+    setStep(ACCOUNT_STEP);
   };
 
   async function createStore() {
-    const created = await createStoreWithFiscalIdentity(formState.form);
+    const created = await createStoreFrom(formState.form);
     if (!created.ok) {
       formState.fail(created, goToFirstStep);
       return;
     }
-    setStoreUlid(created.data);
-    setStep(LAST_STEP);
+    setStoreUlid(created.data.storeUlid);
+    setStep(PRODUCT_STEP);
   }
 
   async function saveBranding(ulid: string) {
@@ -80,14 +73,19 @@ export function useWizard() {
   }
 
   function goNext() {
-    const failures = step === 0 ? validateAccount(formState.form) : validateTax(formState.form);
-    if (!formState.showErrors(toFieldMessages(failures))) return;
-
-    if (step === 0) {
-      setStep(1);
+    if (step === ACCOUNT_STEP) {
+      if (!formState.showErrors(toFieldMessages(validateAccount(formState.form)))) return;
+      setStep(TAX_STEP);
       return;
     }
-    startSaving(createStore);
+
+    if (step === TAX_STEP) {
+      if (!formState.showErrors(toFieldMessages(validateTax(formState.form)))) return;
+      startSaving(createStore);
+      return;
+    }
+
+    setStep(LAST_STEP);
   }
 
   function finish() {
@@ -100,13 +98,26 @@ export function useWizard() {
     });
   }
 
+  function skip() {
+    if (step === PRODUCT_STEP) {
+      setStep(LAST_STEP);
+      return;
+    }
+    enterDashboard();
+  }
+
   return {
     ...formState,
     step,
     isSaving,
+    isLastStep: step === LAST_STEP,
+    canSkip: step >= PRODUCT_STEP,
+    canGoBack: step > ACCOUNT_STEP && (storeUlid === null || step > PRODUCT_STEP),
     goNext,
     finish,
-    goBack: goToFirstStep,
-    skip: enterDashboard,
+    skip,
+    goBack: () => {
+      setStep((previous) => Math.max(ACCOUNT_STEP, previous - 1));
+    },
   };
 }

@@ -1,17 +1,12 @@
 import { parseApiError } from '@/shared/contracts/api-error';
-import { referenceItemsSchema } from '@/shared/contracts/platform-config';
-import type { ReferenceItem, ReferenceList } from '@/shared/contracts/platform-config';
 import { createdStoreSchema, subdomainAvailabilitySchema } from '@/shared/contracts/store';
 import type {
   CreateStoreRequest,
   CreatedStore,
   SubdomainAvailability,
   UpdateBrandingRequest,
-  UpdateFiscalIdentityRequest,
 } from '@/shared/contracts/store';
 import { strings } from '@/shared/i18n/strings';
-
-import type { Result } from './types';
 
 const BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:3001';
 const TIMEOUT_MS = 12_000;
@@ -68,32 +63,6 @@ async function request(path: string, options: RequestOptions = {}): Promise<unkn
   return body;
 }
 
-export async function fetchReferenceItems(list: ReferenceList): Promise<ReferenceItem[]> {
-  const parsed = referenceItemsSchema.safeParse(await request(`/platform-config/lists/${list}`));
-  if (!parsed.success) throw new ApiError(0, undefined, strings.apiErrors.unexpected);
-
-  return parsed.data.items;
-}
-
-export interface OnboardingLists {
-  readonly categories: readonly ReferenceItem[];
-  readonly businessTypes: readonly ReferenceItem[];
-}
-
-export async function loadOnboardingLists(): Promise<Result<OnboardingLists>> {
-  try {
-    const [categories, businessTypes] = await Promise.all([
-      fetchReferenceItems('STORE_CATEGORY'),
-      fetchReferenceItems('BIZ_TYPE'),
-    ]);
-
-    return { ok: true, data: { categories, businessTypes } };
-  } catch (error) {
-    if (error instanceof ApiError) return { ok: false, message: error.message };
-    return { ok: false, message: strings.apiErrors.unexpected };
-  }
-}
-
 export async function checkSubdomain(subdomain: string): Promise<SubdomainAvailability> {
   const query = new URLSearchParams({ subdomain });
   const parsed = subdomainAvailabilitySchema.safeParse(
@@ -111,13 +80,6 @@ export async function createStore(payload: CreateStoreRequest): Promise<CreatedS
   if (!parsed.success) throw new ApiError(0, undefined, strings.apiErrors.unexpected);
 
   return parsed.data;
-}
-
-export async function saveFiscalIdentity(
-  storeUlid: string,
-  payload: UpdateFiscalIdentityRequest,
-): Promise<void> {
-  await request('/stores/me/fiscal-identity', { method: 'PATCH', storeUlid, body: payload });
 }
 
 export async function saveBranding(

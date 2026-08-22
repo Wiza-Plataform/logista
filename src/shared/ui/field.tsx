@@ -6,23 +6,58 @@ import { inputVariants } from '@/shared/ui/input';
 
 export type FieldTone = 'positive' | 'negative';
 
+function FieldLabel({
+  label,
+  hint,
+  isRequired,
+}: {
+  label: string;
+  hint: string | undefined;
+  isRequired: boolean;
+}) {
+  return (
+    <span className="text-foreground mb-1.75 block text-sm font-medium">
+      {label} {isRequired && <span className="text-[var(--st-cancel-fg)]">*</span>}
+      {hint !== undefined && <span className="font-normal text-[var(--txt-faint)]">{hint}</span>}
+    </span>
+  );
+}
+
 export function Field({
   label,
+  hint,
   isRequired = false,
+  isGroup = false,
+  adornment,
   error,
   children,
 }: {
   label: string;
+  hint?: string;
   isRequired?: boolean;
+  isGroup?: boolean;
+  adornment?: ReactNode;
   error?: string | undefined;
   children: ReactNode;
 }) {
+  const heading = <FieldLabel label={label} hint={hint} isRequired={isRequired} />;
+
   return (
     <div className="mb-3.5 last:mb-0">
-      <label className="text-foreground mb-1.75 block text-sm font-medium">
-        {label} {isRequired && <span className="text-[var(--st-cancel-fg)]">*</span>}
-      </label>
-      {children}
+      <div className="relative">
+        {isGroup ? (
+          <div role="group" aria-label={label}>
+            {heading}
+            {children}
+          </div>
+        ) : (
+          <label className="block">
+            {heading}
+            {children}
+          </label>
+        )}
+        {adornment}
+      </div>
       {error !== undefined && <FieldState tone="negative" text={error} />}
     </div>
   );
@@ -63,7 +98,7 @@ export function FieldGroup({ title, children }: { title?: string; children: Reac
 }
 
 export function FieldPair({ children }: { children: ReactNode }) {
-  return <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">{children}</div>;
+  return <div className="grid grid-cols-2 gap-3">{children}</div>;
 }
 
 export function NativeSelect({

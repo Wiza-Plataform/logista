@@ -30,16 +30,18 @@ function PrimaryAction({
 }
 
 export function WizardNavigation({
-  step,
-  lastStep,
+  canGoBack,
+  canSkip,
+  isLastStep,
   isSaving,
   onBack,
   onNext,
   onFinish,
   onSkip,
 }: {
-  step: number;
-  lastStep: number;
+  canGoBack: boolean;
+  canSkip: boolean;
+  isLastStep: boolean;
   isSaving: boolean;
   onBack: () => void;
   onNext: () => void;
@@ -47,11 +49,10 @@ export function WizardNavigation({
   onSkip: () => void;
 }) {
   const t = strings.onboarding;
-  const isLastStep = step === lastStep;
 
   return (
     <div className="border-border mt-7 flex items-center gap-2.5 border-t pt-5">
-      {step > 0 && !isLastStep && (
+      {canGoBack && (
         <Button variant="brand-outline" size="form" disabled={isSaving} onClick={onBack}>
           <ArrowLeft className="size-3.75" strokeWidth={2} />
           {t.previous}
@@ -59,7 +60,7 @@ export function WizardNavigation({
       )}
 
       <div className="ml-auto flex items-center gap-2.5">
-        {isLastStep && (
+        {canSkip && (
           <Button variant="brand-link" size="form-link" disabled={isSaving} onClick={onSkip}>
             {t.skip}
           </Button>

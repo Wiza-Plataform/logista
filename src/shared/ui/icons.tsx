@@ -167,6 +167,27 @@ export const Check: Icon = (props) => (
   </Glyph>
 );
 
+export const Eye: Icon = (props) => (
+  <Glyph {...props}>
+    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" />
+    <circle cx="12" cy="12" r="3" />
+  </Glyph>
+);
+
+export const Plus: Icon = (props) => (
+  <Glyph {...props}>
+    <path d="M12 5v14M5 12h14" />
+  </Glyph>
+);
+
+export const Picture: Icon = (props) => (
+  <Glyph {...props}>
+    <rect x="3" y="3" width="18" height="18" rx="2.5" />
+    <circle cx="8.5" cy="9" r="1.8" />
+    <path d="m21 16-5-5L5 21" />
+  </Glyph>
+);
+
 export const Close: Icon = (props) => (
   <Glyph {...props}>
     <path d="M18 6 6 18M6 6l12 12" />
