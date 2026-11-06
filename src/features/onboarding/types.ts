@@ -1,14 +1,11 @@
-import type { VatRegime } from '@/shared/contracts/store';
+import type { RegisterMerchantAccountRequest } from '../../shared/contracts/merchant-account.ts';
 
 export interface StoreForm {
   readonly name: string;
-  readonly subdomain: string;
-  readonly categoryUlid: string;
-  readonly whatsappPhone: string;
+  readonly fullName: string;
+  readonly phone: string;
   readonly email: string;
-  readonly nif: string;
-  readonly bizTypeUlid: string;
-  readonly vatRegime: VatRegime;
+  readonly password: string;
   readonly description: string;
   readonly primaryColor: string;
 }
@@ -17,39 +14,42 @@ export type StoreFormField = keyof StoreForm;
 
 export const EMPTY_FORM: StoreForm = {
   name: '',
-  subdomain: '',
-  categoryUlid: '',
-  whatsappPhone: '',
+  fullName: '',
+  phone: '',
   email: '',
-  nif: '',
-  bizTypeUlid: '',
-  vatRegime: 'EXEMPT',
+  password: '',
   description: '',
   primaryColor: '',
 };
 
 export const STORE_FORM_FIELDS: readonly StoreFormField[] = [
   'name',
-  'subdomain',
-  'categoryUlid',
-  'whatsappPhone',
+  'fullName',
+  'phone',
   'email',
-  'nif',
-  'bizTypeUlid',
-  'vatRegime',
+  'password',
   'description',
   'primaryColor',
 ];
 
-export const ACCOUNT_FIELDS: readonly StoreFormField[] = [
+export const ACCOUNT_STEP_FIELDS: readonly StoreFormField[] = [
   'name',
-  'subdomain',
-  'categoryUlid',
-  'whatsappPhone',
+  'fullName',
+  'phone',
   'email',
+  'password',
 ];
 
-export type Result<T> =
-  { ok: true; data: T } | { ok: false; field?: string | undefined; message: string };
+export type Failure = { ok: false; field?: string | undefined; message: string };
+
+export type Result<T> = { ok: true; data: T } | Failure;
+
+export interface StartStoreInput {
+  readonly storeName: string;
+  readonly account: RegisterMerchantAccountRequest | null;
+}
+
+export type StartStoreResult =
+  { ok: true; data: { storeUlid: string } } | (Failure & { hasAccount: boolean });
 
 export type FieldMessages = Readonly<Record<string, string>>;

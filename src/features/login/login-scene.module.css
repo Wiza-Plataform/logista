@@ -1,0 +1,847 @@
+@property --scene-delay {
+  syntax: '<time>';
+  inherits: false;
+  initial-value: 0s;
+}
+
+.panel [class] {
+  animation-delay: var(--scene-delay);
+}
+
+.glowAccent {
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--lima) 22%, transparent),
+    transparent
+  );
+  animation: drift-accent 16s ease-in-out infinite alternate;
+}
+
+.glowGreen {
+  background: radial-gradient(closest-side, var(--auth-panel-glow), transparent);
+  animation: drift-green 20s ease-in-out infinite alternate;
+}
+
+.dots {
+  background-image: radial-gradient(var(--auth-panel-dots) 1px, transparent 1.4px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse 70% 60% at 60% 38%, black 0%, transparent 75%);
+  animation: pan 18s linear infinite;
+}
+
+.fade {
+  background: linear-gradient(180deg, transparent 55%, var(--auth-panel-fade) 100%);
+}
+
+.liveDot {
+  animation: live 2.2s ease-out infinite;
+}
+
+.openDot {
+  animation: live-open 2s ease-out infinite;
+}
+
+.scene {
+  transform-origin: center center;
+}
+
+.halo {
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--lima) 30%, transparent),
+    transparent
+  );
+  filter: blur(24px);
+}
+
+.ringAccent {
+  border: 1px dashed color-mix(in srgb, var(--lima) 35%, transparent);
+  animation: spin 60s linear infinite;
+}
+
+.ringWide {
+  animation: spin-reverse 90s linear infinite;
+}
+
+.orbitFast {
+  animation: spin 14s linear infinite;
+}
+
+.orbitSlow {
+  animation: spin 32s linear infinite;
+}
+
+.orbitSlowUpright {
+  animation: spin-reverse 32s linear infinite;
+}
+
+.glowAccentDot {
+  box-shadow: 0 0 12px var(--lima);
+}
+
+.glowPeachDot {
+  box-shadow: 0 0 10px var(--auth-scene-peach);
+}
+
+.route {
+  stroke: color-mix(in srgb, var(--lima) 60%, transparent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 2 6;
+  animation: dash 1.4s linear infinite;
+}
+
+.runner {
+  opacity: 0;
+  offset-rotate: 0deg;
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--lima) 25%, transparent),
+    0 0 16px var(--lima);
+}
+
+.runnerLuanda {
+  offset-path: path('M446 206 C 476 182, 498 186, 528 190');
+  animation: run-luanda 10s linear infinite;
+}
+
+.runnerBenguela {
+  offset-path: path('M444 236 C 468 262, 482 280, 500 282');
+  animation: run-benguela 10s linear infinite;
+}
+
+.runnerLubango {
+  offset-path: path('M440 262 C 468 330, 528 346, 578 346');
+  animation: run-lubango 10s linear infinite;
+}
+
+.ping {
+  opacity: 0;
+}
+
+.pingLuanda {
+  animation: ping-luanda 10s ease-out infinite;
+}
+
+.pingBenguela {
+  animation: ping-benguela 10s ease-out infinite;
+}
+
+.pingLubango {
+  animation: ping-lubango 10s ease-out infinite;
+}
+
+.pinCore {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--lima) 45%, transparent);
+}
+
+.cityLuanda {
+  animation: city-luanda 10s linear infinite;
+}
+
+.cityBenguela {
+  animation: city-benguela 10s linear infinite;
+}
+
+.cityLubango {
+  animation: city-lubango 10s linear infinite;
+}
+
+.floatStore {
+  animation: float 7s ease-in-out infinite;
+}
+
+.floatChat {
+  animation: float-small 6s ease-in-out infinite;
+}
+
+.floatPayment {
+  animation: float-small 7s ease-in-out infinite;
+}
+
+.floatDelivery {
+  animation: float-small 6.5s ease-in-out infinite;
+}
+
+.storeCard {
+  box-shadow:
+    0 40px 70px -24px var(--auth-scene-shadow),
+    inset 0 0 0 1px var(--auth-scene-paper-ring);
+}
+
+.newOrder {
+  box-shadow: 0 10px 24px -8px var(--auth-scene-peach-glow);
+  transform-origin: 80% 50%;
+  animation: pop 10s cubic-bezier(0.3, 1.4, 0.5, 1) infinite;
+}
+
+.shine {
+  background: linear-gradient(90deg, transparent, var(--auth-scene-shine), transparent);
+  animation: shine 5s ease-in-out infinite;
+}
+
+.glass {
+  box-shadow: 0 20px 40px -18px var(--auth-scene-shadow);
+  backdrop-filter: blur(10px);
+}
+
+.chatQuestion {
+  animation: bubble-question 10s ease-out infinite;
+}
+
+.chatTyping {
+  opacity: 0;
+  background: color-mix(in srgb, var(--lima) 22%, transparent);
+  animation: typing 10s linear infinite;
+}
+
+.typingDot {
+  animation: typing-dot 1s ease-in-out infinite;
+}
+
+.chatAnswer {
+  animation: bubble-answer 10s ease-out infinite;
+}
+
+.paymentToast {
+  animation: toast 10s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
+
+.check {
+  stroke-dasharray: 22;
+  stroke-dashoffset: 0;
+  animation: check 10s ease-out infinite;
+}
+
+.statusOnTheWay {
+  animation: status-on-the-way 10s linear infinite;
+}
+
+.statusDelivered {
+  opacity: 0;
+  animation: status-delivered 10s linear infinite;
+}
+
+.trip {
+  background: linear-gradient(90deg, var(--auth-scene-peach), var(--lima));
+  transform-origin: left center;
+  transform: scaleX(0.6);
+  animation: trip 10s ease-in-out infinite;
+}
+
+.moto {
+  left: 60%;
+  box-shadow: 0 0 0 3px var(--auth-scene-peach-ring);
+  animation: moto 10s ease-in-out infinite;
+}
+
+.words {
+  transform: translateY(-60%);
+  animation: words 10s cubic-bezier(0.7, 0, 0.25, 1) infinite;
+}
+
+.stepCard {
+  animation: step-card 12s ease infinite;
+}
+
+.stepNumber {
+  animation: step-number 12s ease infinite;
+}
+
+.stepBar {
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: step-bar 12s linear infinite;
+}
+
+@media (max-width: 1260px) {
+  .scene {
+    transform: scale(0.86);
+  }
+}
+
+@media (max-width: 1140px) {
+  .scene {
+    transform: scale(0.76);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .panel * {
+    animation: none !important;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes float-small {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes drift-accent {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(90px, 70px) scale(1.15);
+  }
+}
+
+@keyframes drift-green {
+  0% {
+    transform: translate(0, 0) scale(1.1);
+  }
+  100% {
+    transform: translate(-80px, -60px) scale(0.95);
+  }
+}
+
+@keyframes pan {
+  to {
+    background-position: 24px 24px;
+  }
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+@keyframes live {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--lima) 70%, transparent);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 7px transparent;
+  }
+}
+
+@keyframes live-open {
+  0% {
+    box-shadow: 0 0 0 0 var(--auth-scene-open-pulse);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+
+@keyframes words {
+  0%,
+  20% {
+    transform: translateY(0);
+  }
+  25%,
+  45% {
+    transform: translateY(-20%);
+  }
+  50%,
+  70% {
+    transform: translateY(-40%);
+  }
+  75%,
+  95% {
+    transform: translateY(-60%);
+  }
+  100% {
+    transform: translateY(-80%);
+  }
+}
+
+@keyframes ping-luanda {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  16% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+  17%,
+  74% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  75% {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  91% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+}
+
+@keyframes ping-benguela {
+  0%,
+  24% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  25% {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  41% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+  42%,
+  74% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  75% {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  91% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+}
+
+@keyframes ping-lubango {
+  0%,
+  49% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  66% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+  67%,
+  74% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  75% {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  91% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+}
+
+@keyframes city-luanda {
+  0%,
+  22% {
+    color: var(--lima);
+  }
+  25%,
+  72% {
+    color: var(--auth-scene-city);
+  }
+  75%,
+  100% {
+    color: var(--lima);
+  }
+}
+
+@keyframes city-benguela {
+  0%,
+  22% {
+    color: var(--auth-scene-city);
+  }
+  25%,
+  47% {
+    color: var(--lima);
+  }
+  50%,
+  72% {
+    color: var(--auth-scene-city);
+  }
+  75%,
+  97% {
+    color: var(--lima);
+  }
+  100% {
+    color: var(--auth-scene-city);
+  }
+}
+
+@keyframes city-lubango {
+  0%,
+  47% {
+    color: var(--auth-scene-city);
+  }
+  50%,
+  97% {
+    color: var(--lima);
+  }
+  100% {
+    color: var(--auth-scene-city);
+  }
+}
+
+@keyframes run-luanda {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  20% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  24% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+  74% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  77% {
+    opacity: 1;
+  }
+  94% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  98%,
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes run-benguela {
+  0%,
+  25% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  28% {
+    opacity: 1;
+  }
+  45% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  49% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+  74% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  77% {
+    opacity: 1;
+  }
+  94% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  98%,
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes run-lubango {
+  0%,
+  50% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  53% {
+    opacity: 1;
+  }
+  70% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  74% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+  75% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  78% {
+    opacity: 1;
+  }
+  94% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  98%,
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes bubble-question {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  4%,
+  93% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  97%,
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+@keyframes typing {
+  0%,
+  8% {
+    opacity: 0;
+  }
+  11%,
+  21% {
+    opacity: 1;
+  }
+  24%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes bubble-answer {
+  0%,
+  22% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  26%,
+  93% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  97%,
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+@keyframes typing-dot {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+@keyframes toast {
+  0%,
+  28% {
+    opacity: 0;
+    transform: translateX(18px) scale(0.96);
+  }
+  32%,
+  92% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  96%,
+  100% {
+    opacity: 0;
+    transform: translateX(18px) scale(0.96);
+  }
+}
+
+@keyframes check {
+  0%,
+  33% {
+    stroke-dashoffset: 22;
+  }
+  40%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pop {
+  0%,
+  25% {
+    transform: scale(0);
+  }
+  29% {
+    transform: scale(1.15);
+  }
+  32%,
+  92% {
+    transform: scale(1);
+  }
+  96%,
+  100% {
+    transform: scale(0);
+  }
+}
+
+@keyframes trip {
+  0%,
+  36% {
+    transform: scaleX(0.06);
+  }
+  88%,
+  96% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0.06);
+  }
+}
+
+@keyframes moto {
+  0%,
+  36% {
+    left: 4%;
+  }
+  88%,
+  96% {
+    left: 96%;
+  }
+  100% {
+    left: 4%;
+  }
+}
+
+@keyframes status-on-the-way {
+  0%,
+  86% {
+    opacity: 1;
+  }
+  89%,
+  97% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes status-delivered {
+  0%,
+  86% {
+    opacity: 0;
+  }
+  89%,
+  97% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes shine {
+  0%,
+  55% {
+    transform: translateX(-140%) skewX(-18deg);
+  }
+  85%,
+  100% {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+
+@keyframes step-bar {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  33% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  34%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
+@keyframes step-card {
+  0%,
+  32% {
+    background: color-mix(in srgb, var(--lima) 9%, var(--auth-panel-card));
+    border-color: color-mix(in srgb, var(--lima) 45%, transparent);
+  }
+  35%,
+  100% {
+    background: var(--auth-panel-card);
+    border-color: var(--auth-panel-card-border);
+  }
+}
+
+@keyframes step-number {
+  0%,
+  32% {
+    background: var(--lima);
+    color: var(--verde-primario);
+    border-color: transparent;
+  }
+  35%,
+  100% {
+    background: transparent;
+    color: var(--auth-panel-txt);
+    border-color: var(--auth-panel-badge-border);
+  }
+}

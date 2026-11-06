@@ -4,9 +4,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { strings } from '@/shared/i18n/strings';
+import { signOutAction } from '@/shared/session/actions';
+import { ArrowLeft } from '@/shared/ui/icons';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -15,14 +18,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from '@/shared/ui/sidebar';
 
-import { mainNav, type NavItem } from './nav';
+import { BrandSymbol } from './brand-symbol';
+import { mainNav, type NavLinkEntry } from './nav';
+import { NAV_ITEM_CLASS } from './nav-item-style';
+import { NavSection } from './nav-section';
 
-const NAV_ITEM_CLASS =
-  'h-auto gap-[11px] rounded-[9px] p-[9px_11px] text-[13.5px] font-medium data-active:font-semibold data-active:shadow-[inset_0_0_0_1px_var(--active-ring)] [&_svg]:size-[17px]';
-
-function NavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
+function NavLink({ item, isActive }: { item: NavLinkEntry; isActive: boolean }) {
+  const { setOpenMobile } = useSidebar();
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
@@ -30,10 +35,26 @@ function NavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
         isActive={isActive}
         tooltip={item.label}
         className={NAV_ITEM_CLASS}
+        onClick={() => {
+          setOpenMobile(false);
+        }}
       >
         <item.icon strokeWidth={1.7} />
         <span>{item.label}</span>
       </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
+function SignOutButton() {
+  return (
+    <SidebarMenuItem>
+      <form action={signOutAction}>
+        <SidebarMenuButton type="submit" tooltip={strings.nav.signOut} className={NAV_ITEM_CLASS}>
+          <ArrowLeft strokeWidth={1.7} />
+          <span>{strings.nav.signOut}</span>
+        </SidebarMenuButton>
+      </form>
     </SidebarMenuItem>
   );
 }
@@ -43,10 +64,10 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="h-14 justify-center px-3">
-        <span className="text-primary truncate text-lg font-bold tracking-tight">
-          <span className="group-data-[collapsible=icon]:hidden">{strings.app.name}</span>
-          <span className="hidden group-data-[collapsible=icon]:inline">W</span>
+      <SidebarHeader className="h-14 flex-row items-center gap-2 px-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+        <BrandSymbol className="size-6" />
+        <span className="text-primary truncate text-lg font-bold tracking-tight group-data-[collapsible=icon]:hidden">
+          {strings.app.name}
         </span>
       </SidebarHeader>
 
@@ -55,13 +76,23 @@ export function AppSidebar() {
           <SidebarGroupLabel>{strings.nav.mainMenu}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainNav.map((item) => (
-                <NavLink key={item.href} item={item} isActive={pathname === item.href} />
-              ))}
+              {mainNav.map((entry) =>
+                entry.kind === 'link' ? (
+                  <NavLink key={entry.href} item={entry} isActive={pathname === entry.href} />
+                ) : (
+                  <NavSection key={entry.basePath} section={entry} pathname={pathname} />
+                ),
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter>
+        <SidebarMenu>
+          <SignOutButton />
+        </SidebarMenu>
+      </SidebarFooter>
 
       <SidebarRail />
     </Sidebar>

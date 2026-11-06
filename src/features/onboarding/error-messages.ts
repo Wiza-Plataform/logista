@@ -9,12 +9,10 @@ function messageFor(code: FailureCode): string {
   switch (code) {
     case 'invalidEmail':
       return t.invalidEmail;
-    case 'subdomainTooShort':
-      return t.subdomainTooShort;
-    case 'nifTooShort':
-      return t.nifTooShort;
     case 'phoneTooShort':
       return t.phoneTooShort;
+    case 'passwordTooShort':
+      return t.passwordTooShort;
     default:
       return t.requiredField;
   }

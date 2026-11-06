@@ -1,6 +1,9 @@
 import { strings } from '@/shared/i18n/strings';
+import { requireMerchantWithStore } from '@/shared/session/guards';
 
-export default function Page() {
+export default async function Page() {
+  await requireMerchantWithStore();
+
   return (
     <main className="flex flex-col gap-2">
       <h1 className="text-h1 font-semibold">{strings.summary.title}</h1>

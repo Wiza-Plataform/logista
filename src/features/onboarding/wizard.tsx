@@ -1,7 +1,7 @@
 'use client';
 
-import type { ReferenceItem } from '@/shared/contracts/platform-config';
 import { strings } from '@/shared/i18n/strings';
+import { PublicHeading, PublicNote, PublicNoteLink } from '@/shared/shell/public-text';
 import { AlertMessage } from '@/shared/ui/field';
 
 import { AccountStep } from './account-step';
@@ -9,91 +9,85 @@ import { BrandingStep } from './branding-step';
 import { WizardNavigation } from './navigation';
 import { StepBar } from './step-bar';
 import type { Step } from './step-bar';
-import { TaxStep } from './tax-step';
-import { LAST_STEP, useWizard } from './use-wizard';
+import { ACCOUNT_STEP, useWizard } from './use-wizard';
 
 const STEPS: readonly Step[] = [
   { id: 'account', label: strings.onboarding.stepAccount },
-  { id: 'tax', label: strings.onboarding.stepTax },
   { id: 'branding', label: strings.onboarding.stepBranding },
 ];
 
-const HEADINGS = [
-  { title: strings.onboarding.accountTitle, subtitle: strings.onboarding.accountSubtitle },
-  { title: strings.onboarding.taxTitle, subtitle: strings.onboarding.taxSubtitle },
-  { title: strings.onboarding.brandingTitle, subtitle: strings.onboarding.brandingSubtitle },
-];
+function Heading({ step, hasAccount }: { step: number; hasAccount: boolean }) {
+  const t = strings.onboarding;
 
-interface WizardProps {
-  categories: readonly ReferenceItem[];
-  businessTypes: readonly ReferenceItem[];
-}
-
-function Heading({ heading }: { heading: { title: string; subtitle: string } | undefined }) {
-  if (heading === undefined) return null;
-
+  if (step !== ACCOUNT_STEP) {
+    return <PublicHeading title={t.brandingTitle} subtitle={t.brandingSubtitle} />;
+  }
   return (
-    <div className="mb-5">
-      <h1 className="text-h1 font-extrabold tracking-[-0.5px]">{heading.title}</h1>
-      <p className="text-muted-foreground text-body mt-1.25 leading-[1.5]">{heading.subtitle}</p>
-    </div>
+    <PublicHeading
+      title={t.accountTitle}
+      subtitle={hasAccount ? t.storeOnlySubtitle : t.accountSubtitle}
+    />
   );
 }
 
-function CurrentStep({
-  wizard,
-  categories,
-  businessTypes,
-}: WizardProps & { wizard: ReturnType<typeof useWizard> }) {
-  if (wizard.step === 0) {
+function Footer({ step, hasAccount }: { step: number; hasAccount: boolean }) {
+  const t = strings.onboarding;
+
+  if (step !== ACCOUNT_STEP) {
     return (
-      <AccountStep
-        values={wizard.form}
-        categories={categories}
-        errors={wizard.errors}
-        onChange={wizard.setField}
-      />
+      <PublicNote>
+        {t.brandingFooterStart}
+        <b className="font-semibold text-[var(--accent-text)]">{t.brandingFooterHighlight}</b>
+        {t.brandingFooterEnd}
+      </PublicNote>
     );
   }
-  if (wizard.step === 1) {
-    return (
-      <TaxStep
-        values={wizard.form}
-        businessTypes={businessTypes}
-        errors={wizard.errors}
-        onChange={wizard.setField}
-      />
-    );
-  }
-  return <BrandingStep values={wizard.form} errors={wizard.errors} onChange={wizard.setField} />;
+  if (hasAccount) return <PublicNote>{t.accountFooter}</PublicNote>;
+
+  return (
+    <PublicNote>
+      {t.accountFooter} {t.haveAccountStart}
+      <PublicNoteLink href="/login">{t.haveAccountLink}</PublicNoteLink>
+    </PublicNote>
+  );
 }
 
-export function Wizard({ categories, businessTypes }: WizardProps) {
-  const t = strings.onboarding;
-  const wizard = useWizard();
+export function Wizard({
+  hasAccount,
+  storeUlid,
+}: {
+  hasAccount: boolean;
+  storeUlid: string | null;
+}) {
+  const wizard = useWizard({ hasAccount, storeUlid });
 
   return (
     <>
       <StepBar steps={STEPS} currentStep={wizard.step} />
-      <Heading heading={HEADINGS.at(wizard.step)} />
+      <Heading step={wizard.step} hasAccount={wizard.hasAccount} />
 
       {wizard.alertMessage !== null && <AlertMessage text={wizard.alertMessage} />}
 
-      <CurrentStep wizard={wizard} categories={categories} businessTypes={businessTypes} />
+      {wizard.step === ACCOUNT_STEP ? (
+        <AccountStep
+          values={wizard.form}
+          errors={wizard.errors}
+          hasAccount={wizard.hasAccount}
+          onChange={wizard.setField}
+        />
+      ) : (
+        <BrandingStep values={wizard.form} errors={wizard.errors} onChange={wizard.setField} />
+      )}
 
       <WizardNavigation
-        step={wizard.step}
-        lastStep={LAST_STEP}
+        isLastStep={wizard.isLastStep}
         isSaving={wizard.isSaving}
-        onBack={wizard.goBack}
         onNext={wizard.goNext}
         onFinish={wizard.finish}
         onSkip={wizard.skip}
       />
 
-      <p className="mt-4.5 text-center text-sm leading-[1.6] text-[var(--txt-faint)]">
-        {wizard.step === LAST_STEP ? t.brandingFooter : t.accountFooter}
-      </p>
+      <Footer step={wizard.step} hasAccount={wizard.hasAccount} />
     </>
   );
 }

@@ -3,75 +3,66 @@
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
-import { createStoreAction, saveBrandingAction, saveFiscalIdentityAction } from './actions';
+import { saveBrandingAction, startStoreAction } from './actions';
 import { toFieldMessages } from './error-messages';
-import type { Result, StoreForm } from './types';
+import type { StartStoreInput, StoreForm } from './types';
 import { useStoreForm } from './use-store-form';
-import { validateAccount, validateTax } from './validation';
+import { validateAccount } from './validation';
 
-export const LAST_STEP = 2;
+export const ACCOUNT_STEP = 0;
+export const BRANDING_STEP = 1;
 
-async function createStoreWithFiscalIdentity(form: StoreForm): Promise<Result<string>> {
-  const created = await createStoreAction({
-    name: form.name.trim(),
-    subdomain: form.subdomain.trim(),
-    categoryUlid: form.categoryUlid,
-    nif: form.nif.trim(),
-    whatsappPhone: form.whatsappPhone.trim(),
-    email: form.email.trim(),
-  });
-  if (!created.ok) return created;
-
-  if (form.bizTypeUlid !== '') {
-    const fiscal = await saveFiscalIdentityAction(created.data.storeUlid, {
-      bizTypeUlid: form.bizTypeUlid,
-      vatRegime: form.vatRegime,
-    });
-    if (!fiscal.ok) return fiscal;
-  }
-
-  return { ok: true, data: created.data.storeUlid };
-}
-
-function saveBrandingOf(storeUlid: string, form: StoreForm): Promise<Result<null>> {
-  const description = form.description.trim();
-
-  return saveBrandingAction(storeUlid, {
-    description: description === '' ? null : description,
-    primaryColor: form.primaryColor === '' ? null : form.primaryColor,
-  });
+function startInputOf(form: StoreForm, hasAccount: boolean): StartStoreInput {
+  return {
+    storeName: form.name.trim(),
+    account: hasAccount
+      ? null
+      : {
+          fullName: form.fullName.trim(),
+          email: form.email.trim(),
+          phone: form.phone,
+          password: form.password,
+        },
+  };
 }
 
 function hasNoBranding(form: StoreForm): boolean {
   return form.description.trim() === '' && form.primaryColor === '';
 }
 
-export function useWizard() {
+export function useWizard(initial: { hasAccount: boolean; storeUlid: string | null }) {
   const router = useRouter();
   const [isSaving, startSaving] = useTransition();
-  const [step, setStep] = useState(0);
-  const [storeUlid, setStoreUlid] = useState<string | null>(null);
+  const [step, setStep] = useState(initial.storeUlid === null ? ACCOUNT_STEP : BRANDING_STEP);
+  const [hasAccount, setHasAccount] = useState(initial.hasAccount);
+  const [storeUlid, setStoreUlid] = useState(initial.storeUlid);
   const formState = useStoreForm();
 
   const enterDashboard = () => {
     router.push('/');
   };
   const goToFirstStep = () => {
-    setStep(0);
+    setStep(ACCOUNT_STEP);
   };
 
-  async function createStore() {
-    const created = await createStoreWithFiscalIdentity(formState.form);
-    if (!created.ok) {
-      formState.fail(created, goToFirstStep);
+  async function startStore() {
+    const started = await startStoreAction(startInputOf(formState.form, hasAccount));
+    if (!started.ok) {
+      if (started.hasAccount) setHasAccount(true);
+      formState.fail(started, goToFirstStep);
       return;
     }
-    setStoreUlid(created.data);
-    setStep(LAST_STEP);
+    setHasAccount(true);
+    setStoreUlid(started.data.storeUlid);
+    setStep(BRANDING_STEP);
   }
 
   async function saveBranding(ulid: string) {
-    const saved = await saveBrandingOf(ulid, formState.form);
+    const description = formState.form.description.trim();
+    const saved = await saveBrandingAction(ulid, {
+      description: description === '' ? null : description,
+      primaryColor: formState.form.primaryColor === '' ? null : formState.form.primaryColor,
+    });
     if (!saved.ok) {
       formState.fail(saved, goToFirstStep);
       return;
@@ -80,14 +71,9 @@ export function useWizard() {
   }
 
   function goNext() {
-    const failures = step === 0 ? validateAccount(formState.form) : validateTax(formState.form);
+    const failures = validateAccount(formState.form, !hasAccount);
     if (!formState.showErrors(toFieldMessages(failures))) return;
-
-    if (step === 0) {
-      setStep(1);
-      return;
-    }
-    startSaving(createStore);
+    startSaving(startStore);
   }
 
   function finish() {
@@ -104,9 +90,10 @@ export function useWizard() {
     ...formState,
     step,
     isSaving,
+    hasAccount,
+    isLastStep: step === BRANDING_STEP,
     goNext,
     finish,
-    goBack: goToFirstStep,
     skip: enterDashboard,
   };
 }

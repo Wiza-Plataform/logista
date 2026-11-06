@@ -6,23 +6,62 @@ import { inputVariants } from '@/shared/ui/input';
 
 export type FieldTone = 'positive' | 'negative';
 
+function FieldLabel({
+  label,
+  hint,
+  isRequired,
+}: {
+  label: string;
+  hint: string | undefined;
+  isRequired: boolean;
+}) {
+  return (
+    <span className="text-foreground mb-1.75 block text-sm font-medium">
+      {label} {isRequired && <span className="text-[var(--st-cancel-fg)]">*</span>}
+      {hint !== undefined && <span className="font-normal text-[var(--txt-faint)]">{hint}</span>}
+    </span>
+  );
+}
+
+export type FieldVariant = 'form' | 'auth';
+
 export function Field({
   label,
+  hint,
   isRequired = false,
+  isGroup = false,
+  variant = 'form',
+  adornment,
   error,
   children,
 }: {
   label: string;
+  hint?: string;
   isRequired?: boolean;
+  isGroup?: boolean;
+  variant?: FieldVariant;
+  adornment?: ReactNode;
   error?: string | undefined;
   children: ReactNode;
 }) {
+  const heading = <FieldLabel label={label} hint={hint} isRequired={isRequired} />;
+
   return (
-    <div className="mb-3.5 last:mb-0">
-      <label className="text-foreground mb-1.75 block text-sm font-medium">
-        {label} {isRequired && <span className="text-[var(--st-cancel-fg)]">*</span>}
-      </label>
-      {children}
+    <div className={cn('last:mb-0', variant === 'auth' ? 'mb-3.75' : 'mb-3.5')}>
+      <div className="relative">
+        {isGroup ? (
+          <div role="group" aria-label={label}>
+            {heading}
+            {children}
+          </div>
+        ) : (
+          <label className="block">
+            {heading}
+            {children}
+          </label>
+        )}
+        {adornment}
+      </div>
       {error !== undefined && <FieldState tone="negative" text={error} />}
     </div>
   );
@@ -63,19 +102,7 @@ export function FieldGroup({ title, children }: { title?: string; children: Reac
 }
 
 export function FieldPair({ children }: { children: ReactNode }) {
-  return <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">{children}</div>;
-}
-
-export function NativeSelect({
-  className,
-  ...props
-}: React.ComponentProps<'select'> & { className?: string }) {
-  return (
-    <select
-      {...props}
-      className={cn(inputVariants({ variant: 'form' }), 'cursor-pointer', className)}
-    />
-  );
+  return <div className="grid grid-cols-2 gap-3">{children}</div>;
 }
 
 export function Textarea({
@@ -98,6 +125,7 @@ export function InputAffix({
   prefix,
   suffix,
   isInvalid = false,
+  className,
   ...props
 }: Omit<React.ComponentProps<'input'>, 'prefix'> & {
   prefix?: string;
@@ -111,6 +139,7 @@ export function InputAffix({
         isInvalid
           ? 'border-destructive'
           : 'border-border focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/15',
+        className,
       )}
     >
       {prefix !== undefined && (

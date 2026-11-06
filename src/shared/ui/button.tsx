@@ -22,6 +22,7 @@ const buttonVariants = cva(
         'brand-outline':
           'border-border bg-card text-muted-foreground hover:border-ring hover:text-foreground',
         'brand-link': 'text-muted-foreground underline underline-offset-4 hover:text-foreground',
+        'brand-danger': 'bg-[var(--st-cancel-bg)] text-[var(--st-cancel-fg)] hover:brightness-105',
       },
       size: {
         default:
@@ -36,7 +37,9 @@ const buttonVariants = cva(
           'size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg',
         'icon-lg': 'size-9',
         form: 'h-10.5 gap-1.75 rounded-sm px-4.5 text-body font-semibold',
+        action: 'h-9 gap-[7px] rounded-[10px] px-[15px] text-note font-semibold',
         'form-link': 'h-10.5 gap-1.75 px-2 text-body font-semibold',
+        auth: 'h-auto w-full gap-2 rounded-sm border-0 px-3.75 py-3.25 text-body leading-[normal] font-bold disabled:opacity-65',
       },
     },
     defaultVariants: {

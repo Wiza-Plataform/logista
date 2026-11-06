@@ -1,41 +1,24 @@
 import * as z from 'zod';
 
-import { createStoreSchema } from '../../shared/contracts/store.ts';
+import { registerMerchantAccountSchema } from '../../shared/contracts/merchant-account.ts';
 import { isCompletePhoneAO } from '../../shared/i18n/format.ts';
 import { STORE_FORM_FIELDS } from './types.ts';
 import type { StoreFormField } from './types.ts';
 
-export type FailureCode =
-  'required' | 'invalidEmail' | 'subdomainTooShort' | 'nifTooShort' | 'phoneTooShort';
+export type FailureCode = 'required' | 'invalidEmail' | 'phoneTooShort' | 'passwordTooShort';
 
 export type Failures = Readonly<Record<string, FailureCode>>;
 
 export interface AccountFields {
   readonly name: string;
-  readonly subdomain: string;
-  readonly categoryUlid: string;
-  readonly whatsappPhone: string;
+  readonly fullName: string;
+  readonly phone: string;
   readonly email: string;
+  readonly password: string;
 }
 
-export interface TaxFields {
-  readonly nif: string;
-}
-
-const MIN_NIF_DIGITS = 9;
-
-function digitsOf(value: string): string {
-  return value.replace(/\D/g, '');
-}
-
-const accountSchema = createStoreSchema
-  .pick({ name: true, subdomain: true, categoryUlid: true, email: true })
-  .extend({
-    whatsappPhone: z.string().refine(isCompletePhoneAO),
-  });
-
-const taxSchema = z.object({
-  nif: z.string().refine((value) => digitsOf(value).length >= MIN_NIF_DIGITS),
+const accountSchema = registerMerchantAccountSchema.extend({
+  phone: z.string().refine(isCompletePhoneAO),
 });
 
 interface Issue {
@@ -46,18 +29,16 @@ function failureCodeFor(field: string): FailureCode {
   switch (field) {
     case 'email':
       return 'invalidEmail';
-    case 'subdomain':
-      return 'subdomainTooShort';
-    case 'whatsappPhone':
+    case 'phone':
       return 'phoneTooShort';
-    case 'nif':
-      return 'nifTooShort';
+    case 'password':
+      return 'passwordTooShort';
     default:
       return 'required';
   }
 }
 
-function toFailures(issues: readonly Issue[]): Failures {
+function toFailures(issues: readonly Issue[]): Record<string, FailureCode> {
   const failures = new Map<string, FailureCode>();
 
   for (const issue of issues) {
@@ -68,22 +49,19 @@ function toFailures(issues: readonly Issue[]): Failures {
   return Object.fromEntries(failures);
 }
 
-export function validateAccount(fields: AccountFields): Failures {
+export function validateAccount(fields: AccountFields, withAccount: boolean): Failures {
+  const failures: Record<string, FailureCode> = {};
+  if (fields.name.trim() === '') failures.name = 'required';
+  if (!withAccount) return failures;
+
   const parsed = accountSchema.safeParse({
-    name: fields.name.trim(),
-    subdomain: fields.subdomain.trim(),
-    categoryUlid: fields.categoryUlid,
+    fullName: fields.fullName.trim(),
     email: fields.email.trim(),
-    whatsappPhone: fields.whatsappPhone,
+    phone: fields.phone,
+    password: fields.password,
   });
 
-  return parsed.success ? {} : toFailures(parsed.error.issues);
-}
-
-export function validateTax(fields: TaxFields): Failures {
-  const parsed = taxSchema.safeParse({ nif: fields.nif.trim() });
-
-  return parsed.success ? {} : toFailures(parsed.error.issues);
+  return parsed.success ? failures : { ...failures, ...toFailures(parsed.error.issues) };
 }
 
 export function toFormField(apiField: string | undefined): StoreFormField | undefined {

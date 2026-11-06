@@ -25,8 +25,10 @@ src/shared/lib/utils.ts   o `cn()` que os componentes do shadcn importam
 src/styles/globals.css    tokens do wiza-ds.css portados + ponte para os nomes do shadcn
 ```
 
-Rede só em `api.ts` dentro de cada feature; nunca guardar tokens no `localStorage` (cookies
-HttpOnly emitidos pela API).
+Rede só em `api.ts` (de cada feature, ou de `src/shared/session/`) sobre o cliente de
+`src/shared/api/client.ts`, que junta o `Authorization: Bearer` a partir do cookie. Nunca guardar
+tokens no `localStorage`: o token de sessão da API vive no cookie `wiza_session`, `HttpOnly`,
+escrito por este servidor.
 
 ## Comandos
 
@@ -82,24 +84,40 @@ Cinco detalhes que custam a redescobrir:
   diferente — a primeira versão usou-o e os 33 cartões deixaram de coincidir com o design. Ecrãs
   portados de um ficheiro de design usam este conjunto; o lucide fica para o resto.
 
-**Onboarding** (`/onboarding`, `src/features/onboarding/`) é a primeira feature ligada à API. Fala
-com ela pelo servidor do Next — `api.ts` só é chamado das Server Actions de `actions.ts` e do
-componente de servidor da página — por isso o header de tenant nunca passa pelo browser e a API não
-precisa de CORS. **A API tem de correr noutra porta que não a 3000**, que é do `next dev`:
-`PORT=3001 node dist/main.js`, e `API_BASE_URL` a apontar para lá.
+**Sessão** (`src/shared/session/`). O browser nunca fala com a API: `api.ts` só é chamado de
+Server Actions e de componentes de servidor, e a API não precisa de CORS. O registo e o login
+devolvem um token opaco que a Server Action guarda no cookie `wiza_session` (`HttpOnly`,
+`SameSite=Lax`, `Secure` em produção, 7 dias); o `client.ts` envia-o em `Bearer`. Cada página
+protegida chama `requireMerchantWithStore()` — na **página**, não no layout, porque os layouts não
+voltam a correr na navegação. Sem sessão vai para `/login`, sem loja para `/onboarding`. O logout é
+uma Server Action num `<form>` do rodapé da sidebar. **A API corre na 3001**, porque a 3000 é do
+`next dev`: `PORT=3001 node dist/main.js`, com `API_BASE_URL` a apontar para lá.
 
-São **três** passos e não os quatro do protótipo. O que ficou de fora ficou por não ter backend:
-primeiro produto (não há módulo de produtos), palavra-passe (não há Identity & Access), logótipo e
-banner (não há rota de upload) e nome fiscal (não existe no `UpdateFiscalIdentityDto`). A loja é
-criada ao sair do passo **Fiscal**, porque `POST /stores` exige o NIF junto com o resto.
+**Onboarding** (`/onboarding`) tem **dois** passos, Conta e Visual. O passo Conta pede o nome
+completo, que o protótipo não tem e o contrato da API exige. Fiscal, Produto, logótipo e banner
+saíram por não terem backend. O endereço é derivado e verificado **pela API**
+(`GET /stores/subdomain-availability?name=`, pública); o `startStoreAction` confirma-o, cria a conta,
+grava o cookie e cria a loja num só pedido. Se a conta já existir, o passo Conta mostra só o nome da
+loja.
+
+Uma armadilha: gravar um cookie numa Server Action faz o Next voltar a desenhar a página. Por isso
+`/onboarding` **não redireciona** quem já tem loja — se o fizesse, o `redirect('/')` corria a meio
+do wizard e o passo Visual nunca aparecia. Recebe o `storeUlid` e abre o wizard no Visual.
+
+**Login** (`/login`, `src/features/login/`) usa o layout de `design/admin/Login - WIZA.html` (o
+login do Staff) com textos de lojista: painel de marca à esquerda, formulário à direita, variantes
+`auth` no `Input`, `Button`, `Field` e `PasswordField`. Erros num só alerta no topo, com os campos a
+vermelho; 401 marca a palavra-passe. "Lembrar-me" guarda o email no cookie `wiza_remembered_email`
+(`HttpOnly`, `path=/login`). Sem "Esqueceu a palavra-passe?" enquanto a API não tiver reposição.
+As `@media` desse protótipo estão mortas (a regra base vem depois e sobrepõe-as); o port segue a
+intenção — painel escondido até 900px, passos em coluna até 1180px.
 
 O `validation.ts` devolve **códigos de falha, não frases**, e importa o contrato zod e o
-formatador por caminho **relativo** (`../../shared/contracts/store.ts`): o `node --test` faz type
+formatador por caminho **relativo** (`../../shared/contracts/merchant-account.ts`): o `node --test` faz type
 stripping e não resolve o alias `@/`, por isso um módulo que o usasse deixava de ser testável. A
 tradução para pt-AO fica no `error-messages.ts`.
 
-Falta: autenticação por cookie HttpOnly e as restantes features do dashboard. Sem cores novas, sem
-emoji.
+Falta: as restantes features do dashboard. Sem cores novas, sem emoji.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

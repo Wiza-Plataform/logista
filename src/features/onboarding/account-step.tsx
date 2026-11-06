@@ -1,145 +1,130 @@
 'use client';
 
-import type { ReferenceItem } from '@/shared/contracts/platform-config';
+import { PasswordField } from '@/shared/forms/password-field';
+import { maskLocalPhoneAO } from '@/shared/i18n/format';
 import { strings } from '@/shared/i18n/strings';
-import {
-  Field,
-  FieldGroup,
-  FieldHint,
-  FieldPair,
-  FieldState,
-  InputAffix,
-  NativeSelect,
-} from '@/shared/ui/field';
+import { Field, FieldGroup, FieldHint, FieldPair, FieldState, InputAffix } from '@/shared/ui/field';
 import { Input } from '@/shared/ui/input';
 
 import type { FieldMessages, StoreForm, StoreFormField } from './types';
-import { useSubdomainStatus } from './use-subdomain-status';
-import type { SubdomainStatus } from './use-subdomain-status';
+import { useAddressStatus } from './use-address-status';
+import type { AddressStatus } from './use-address-status';
 
-export type AccountValues = Pick<
-  StoreForm,
-  'name' | 'subdomain' | 'categoryUlid' | 'whatsappPhone' | 'email'
->;
+export type AccountValues = Pick<StoreForm, 'name' | 'fullName' | 'phone' | 'email' | 'password'>;
 
-interface AccountStepProps {
+interface AccountFieldsProps {
   values: AccountValues;
-  categories: readonly ReferenceItem[];
   errors: FieldMessages;
   onChange: <K extends StoreFormField>(field: K, value: StoreForm[K]) => void;
 }
 
-type FieldProps = Omit<AccountStepProps, 'categories'>;
-
-function TradeNameField({ values, errors, onChange }: FieldProps) {
+function AddressPreview({ status }: { status: AddressStatus }) {
   const t = strings.onboarding;
+
+  if (status.phase === 'idle') return null;
+  if (status.phase === 'checking') {
+    return <FieldHint>{t.subdomainChecking}</FieldHint>;
+  }
+  if (status.phase === 'unavailable') {
+    return <FieldState tone="negative" text={status.reason} />;
+  }
+
+  return (
+    <FieldState
+      tone="positive"
+      text={`${status.subdomain}${t.domainSuffix}${t.addressAvailableSuffix}`}
+    />
+  );
+}
+
+function TradeNameField({ values, errors, onChange }: AccountFieldsProps) {
+  const t = strings.onboarding;
+  const status = useAddressStatus(values.name);
 
   return (
     <Field label={t.tradeName} isRequired error={errors.name}>
       <Input
         variant="form"
         value={values.name}
-        aria-invalid={errors.name !== undefined}
+        maxLength={120}
+        aria-invalid={errors.name !== undefined || status.phase === 'unavailable'}
         placeholder={t.tradeNamePlaceholder}
         onChange={(event) => {
           onChange('name', event.target.value);
         }}
       />
+      {errors.name === undefined && <AddressPreview status={status} />}
     </Field>
   );
 }
 
-function SubdomainAvailability({ status }: { status: SubdomainStatus }) {
-  const t = strings.onboarding;
-
-  if (status.phase === 'checking') {
-    return <p className="mt-1.75 text-xs text-[var(--txt-faint)]">{t.subdomainChecking}</p>;
-  }
-  if (status.phase === 'available') {
-    return <FieldState tone="positive" text={t.subdomainAvailable} />;
-  }
-  if (status.phase === 'taken') {
-    return <FieldState tone="negative" text={status.reason} />;
-  }
-  return null;
-}
-
-function StoreAddressField({ values, errors, onChange }: FieldProps) {
-  const t = strings.onboarding;
-  const status = useSubdomainStatus(values.subdomain);
-
-  return (
-    <Field label={t.storeAddress} isRequired error={errors.subdomain}>
-      <InputAffix
-        value={values.subdomain}
-        suffix={t.domainSuffix}
-        autoComplete="off"
-        isInvalid={errors.subdomain !== undefined || status.phase === 'taken'}
-        placeholder={t.subdomainPlaceholder}
-        onChange={(event) => {
-          onChange('subdomain', event.target.value);
-        }}
-      />
-      <SubdomainAvailability status={status} />
-    </Field>
-  );
-}
-
-function CategoryField({ values, categories, errors, onChange }: AccountStepProps) {
+function PhoneAndEmail({ values, errors, onChange }: AccountFieldsProps) {
   const t = strings.onboarding;
 
   return (
-    <Field label={t.category} isRequired error={errors.categoryUlid}>
-      <NativeSelect
-        value={values.categoryUlid}
-        aria-invalid={errors.categoryUlid !== undefined}
-        onChange={(event) => {
-          onChange('categoryUlid', event.target.value);
-        }}
-      >
-        <option value="">{t.selectPlaceholder}</option>
-        {categories.map((category) => (
-          <option key={category.ulid} value={category.ulid}>
-            {category.label}
-          </option>
-        ))}
-      </NativeSelect>
-    </Field>
+    <FieldPair>
+      <Field label={t.mobile} isRequired error={errors.phone}>
+        <InputAffix
+          value={values.phone}
+          prefix={t.phonePrefix}
+          inputMode="tel"
+          autoComplete="tel-national"
+          isInvalid={errors.phone !== undefined}
+          placeholder={t.phonePlaceholder}
+          onChange={(event) => {
+            onChange('phone', maskLocalPhoneAO(event.target.value));
+          }}
+        />
+      </Field>
+
+      <Field label={t.email} isRequired error={errors.email}>
+        <Input
+          variant="form"
+          type="email"
+          value={values.email}
+          maxLength={160}
+          autoComplete="email"
+          aria-invalid={errors.email !== undefined}
+          placeholder={t.emailPlaceholder}
+          onChange={(event) => {
+            onChange('email', event.target.value);
+          }}
+        />
+      </Field>
+    </FieldPair>
   );
 }
 
-function ContactFields({ values, errors, onChange }: FieldProps) {
+function ContactFields({ values, errors, onChange }: AccountFieldsProps) {
   const t = strings.onboarding;
 
   return (
     <FieldGroup title={t.contactsGroup}>
-      <FieldPair>
-        <Field label={t.mobile} isRequired error={errors.whatsappPhone}>
-          <InputAffix
-            value={values.whatsappPhone}
-            prefix={t.phonePrefix}
-            inputMode="tel"
-            isInvalid={errors.whatsappPhone !== undefined}
-            placeholder={t.phonePlaceholder}
-            onChange={(event) => {
-              onChange('whatsappPhone', event.target.value);
-            }}
-          />
-        </Field>
+      <Field label={t.fullName} isRequired error={errors.fullName}>
+        <Input
+          variant="form"
+          value={values.fullName}
+          maxLength={120}
+          autoComplete="name"
+          aria-invalid={errors.fullName !== undefined}
+          placeholder={t.fullNamePlaceholder}
+          onChange={(event) => {
+            onChange('fullName', event.target.value);
+          }}
+        />
+      </Field>
 
-        <Field label={t.email} isRequired error={errors.email}>
-          <Input
-            variant="form"
-            type="email"
-            value={values.email}
-            aria-invalid={errors.email !== undefined}
-            placeholder={t.emailPlaceholder}
-            onChange={(event) => {
-              onChange('email', event.target.value);
-            }}
-          />
-        </Field>
-      </FieldPair>
+      <PhoneAndEmail values={values} errors={errors} onChange={onChange} />
+
+      <PasswordField
+        value={values.password}
+        error={errors.password}
+        placeholder={t.passwordPlaceholder}
+        autoComplete="new-password"
+        onChange={(value) => {
+          onChange('password', value);
+        }}
+      />
 
       <FieldHint>
         {t.contactHintStart}
@@ -150,20 +135,16 @@ function ContactFields({ values, errors, onChange }: FieldProps) {
   );
 }
 
-export function AccountStep({ values, categories, errors, onChange }: AccountStepProps) {
+export function AccountStep({
+  hasAccount,
+  ...fields
+}: AccountFieldsProps & { hasAccount: boolean }) {
   return (
     <>
       <FieldGroup>
-        <TradeNameField values={values} errors={errors} onChange={onChange} />
-        <StoreAddressField values={values} errors={errors} onChange={onChange} />
-        <CategoryField
-          values={values}
-          categories={categories}
-          errors={errors}
-          onChange={onChange}
-        />
+        <TradeNameField {...fields} />
       </FieldGroup>
-      <ContactFields values={values} errors={errors} onChange={onChange} />
+      {!hasAccount && <ContactFields {...fields} />}
     </>
   );
 }
