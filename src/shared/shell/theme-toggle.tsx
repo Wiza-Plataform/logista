@@ -3,11 +3,12 @@
 import { useState } from 'react';
 
 import { strings } from '@/shared/i18n/strings';
+import { cn } from '@/shared/lib/utils';
 import { Moon, Sun } from '@/shared/ui/icons';
 
 import { THEME_COOKIE, THEME_MAX_AGE, type Theme } from './theme';
 
-export function ThemeToggle({ initial }: { initial: Theme }) {
+export function ThemeToggle({ initial, className }: { initial: Theme; className?: string }) {
   const [theme, setTheme] = useState<Theme>(initial);
 
   function toggle() {
@@ -22,7 +23,10 @@ export function ThemeToggle({ initial }: { initial: Theme }) {
       type="button"
       onClick={toggle}
       aria-label={strings.theme.toggle}
-      className="bg-card border-border text-muted-foreground hover:text-foreground hover:border-ring grid size-10 place-items-center rounded-[10px] border transition-colors"
+      className={cn(
+        'bg-card border-border text-muted-foreground hover:text-foreground hover:border-ring grid size-10 place-items-center rounded-[10px] border transition-colors',
+        className,
+      )}
     >
       {theme === 'light' ? (
         <Sun className="size-[18px]" strokeWidth={1.8} />

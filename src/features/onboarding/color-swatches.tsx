@@ -54,7 +54,3 @@ export function ColorSwatches({
     </div>
   );
 }
-
-export function tokenOfHex(hex: string): string | undefined {
-  return BRAND_COLORS.find((color) => color.hex === hex)?.token;
-}

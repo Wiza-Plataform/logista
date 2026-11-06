@@ -40,6 +40,65 @@
   --fs-sm: 12.5px;
   --fs-xs: 11px;
   --fs-label: 10.5px;
+  --fs-hero: 60px;
+  --fs-wordmark: 24px;
+  --fs-amount: 17px;
+  --fs-lead: 16px;
+  --fs-step: 14px;
+  --fs-note: 13px;
+  --fs-fine: 12px;
+  --fs-caption: 11.5px;
+
+  --auth-panel-base: #0a1710;
+  --auth-panel-glow: rgba(36, 118, 66, 0.55);
+  --auth-panel-dots: rgba(255, 255, 255, 0.09);
+  --auth-panel-fade: rgba(6, 14, 9, 0.85);
+  --auth-panel-txt: #f4f6ef;
+  --auth-panel-txt-dim: #b3bbae;
+  --auth-panel-txt-faint: #a9b2a4;
+  --auth-panel-label: #dde3d6;
+  --auth-panel-card: rgba(255, 255, 255, 0.035);
+  --auth-panel-card-border: rgba(255, 255, 255, 0.09);
+  --auth-panel-pill: rgba(255, 255, 255, 0.04);
+  --auth-panel-pill-border: rgba(255, 255, 255, 0.14);
+  --auth-panel-badge-border: rgba(255, 255, 255, 0.28);
+  --auth-panel-ring: rgba(255, 255, 255, 0.07);
+  --auth-panel-ring-dashed: rgba(255, 255, 255, 0.08);
+
+  --auth-scene-glass: rgba(12, 22, 16, 0.82);
+  --auth-scene-glass-border: rgba(255, 255, 255, 0.1);
+  --auth-scene-divider: rgba(255, 255, 255, 0.08);
+  --auth-scene-track: rgba(255, 255, 255, 0.12);
+  --auth-scene-bubble: rgba(255, 255, 255, 0.09);
+  --auth-scene-bubble-txt: #e8ece3;
+  --auth-scene-muted: #97a091;
+  --auth-scene-soft: #b5bdb0;
+  --auth-scene-city: rgba(242, 244, 238, 0.62);
+  --auth-scene-shadow: rgba(0, 0, 0, 0.7);
+  --auth-scene-shine: rgba(255, 255, 255, 0.55);
+  --auth-scene-paper: #f7f6f0;
+  --auth-scene-paper-ring: rgba(255, 255, 255, 0.5);
+  --auth-scene-ink: #16190f;
+  --auth-scene-ink-dim: #5f6457;
+  --auth-scene-peach: #f2956b;
+  --auth-scene-peach-ink: #2a1306;
+  --auth-scene-peach-soft: rgba(242, 149, 107, 0.18);
+  --auth-scene-peach-ring: rgba(242, 149, 107, 0.35);
+  --auth-scene-peach-glow: rgba(242, 149, 107, 0.8);
+  --auth-scene-sand: #ebd9b4;
+  --auth-scene-sand-ink: #3a2a0c;
+  --auth-scene-open-bg: #e4efd0;
+  --auth-scene-open-fg: #2f4a12;
+  --auth-scene-open-dot: #4e8a1e;
+  --auth-scene-open-pulse: rgba(78, 138, 30, 0.55);
+  --auth-scene-tile-dress: #f6c9ae;
+  --auth-scene-tile-dress-ink: #d9673a;
+  --auth-scene-tile-sandals: #dde8b5;
+  --auth-scene-tile-sandals-ink: #7c9a2c;
+  --auth-scene-tile-basket: #eedfc0;
+  --auth-scene-tile-basket-ink: #b07f2e;
+  --auth-scene-tile-earrings: #cfe4db;
+  --auth-scene-tile-earrings-ink: #2f7d66;
 }
 
 /* ---------- TEMA ESCURO (omissão) ---------- */
@@ -189,8 +248,27 @@
   --text-sm: var(--fs-sm);
   --text-xs: var(--fs-xs);
   --text-label: var(--fs-label);
+  --text-hero: var(--fs-hero);
+  --text-wordmark: var(--fs-wordmark);
+  --text-lead: var(--fs-lead);
+  --text-amount: var(--fs-amount);
+  --text-step: var(--fs-step);
+  --text-note: var(--fs-note);
+  --text-fine: var(--fs-fine);
+  --text-caption: var(--fs-caption);
 
   --font-sans: var(--font-saira), system-ui, sans-serif;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @layer base {

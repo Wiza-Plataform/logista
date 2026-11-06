@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
-import { ACCOUNT_FIELDS, EMPTY_FORM } from './types';
-import type { FieldMessages, Result, StoreForm, StoreFormField } from './types';
+import { ACCOUNT_STEP_FIELDS, EMPTY_FORM } from './types';
+import type { Failure, FieldMessages, StoreForm, StoreFormField } from './types';
 import { toFormField } from './validation';
 
 function withoutField(messages: FieldMessages, field: string): FieldMessages {
@@ -31,13 +31,13 @@ export function useStoreForm() {
       return Object.keys(found).length === 0;
     },
 
-    fail: (failure: Extract<Result<unknown>, { ok: false }>, goToFirstStep: () => void) => {
+    fail: (failure: Failure, goToFirstStep: () => void) => {
       const field = toFormField(failure.field);
       if (field === undefined) {
         setAlertMessage(failure.message);
         return;
       }
-      if (ACCOUNT_FIELDS.includes(field)) goToFirstStep();
+      if (ACCOUNT_STEP_FIELDS.includes(field)) goToFirstStep();
       setErrors({ [field]: failure.message });
     },
   };

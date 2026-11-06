@@ -1,111 +1,93 @@
 'use client';
 
 import { strings } from '@/shared/i18n/strings';
+import { PublicHeading, PublicNote, PublicNoteLink } from '@/shared/shell/public-text';
 import { AlertMessage } from '@/shared/ui/field';
 
 import { AccountStep } from './account-step';
 import { BrandingStep } from './branding-step';
 import { WizardNavigation } from './navigation';
-import { ProductStep } from './product-step';
 import { StepBar } from './step-bar';
 import type { Step } from './step-bar';
-import { TaxStep } from './tax-step';
-import { ACCOUNT_STEP, PRODUCT_STEP, TAX_STEP, useWizard } from './use-wizard';
-import { useProductDraft } from './use-product-draft';
+import { ACCOUNT_STEP, useWizard } from './use-wizard';
 
 const STEPS: readonly Step[] = [
   { id: 'account', label: strings.onboarding.stepAccount },
-  { id: 'tax', label: strings.onboarding.stepTax },
-  { id: 'product', label: strings.onboarding.stepProduct },
   { id: 'branding', label: strings.onboarding.stepBranding },
 ];
 
-const HEADINGS = [
-  { title: strings.onboarding.accountTitle, subtitle: strings.onboarding.accountSubtitle },
-  { title: strings.onboarding.taxTitle, subtitle: strings.onboarding.taxSubtitle },
-  { title: strings.onboarding.productTitle, subtitle: strings.onboarding.productSubtitle },
-  { title: strings.onboarding.brandingTitle, subtitle: strings.onboarding.brandingSubtitle },
-];
-
-function Heading({ heading }: { heading: { title: string; subtitle: string } | undefined }) {
-  if (heading === undefined) return null;
-
-  return (
-    <div className="mb-5">
-      <h1 className="text-h1 font-extrabold tracking-[-0.5px]">{heading.title}</h1>
-      <p className="text-muted-foreground text-body mt-1.25 leading-[1.5]">{heading.subtitle}</p>
-    </div>
-  );
-}
-
-function Footer({ step }: { step: number }) {
+function Heading({ step, hasAccount }: { step: number; hasAccount: boolean }) {
   const t = strings.onboarding;
-  const className = 'mt-4.5 text-center text-sm leading-[1.6] text-[var(--txt-faint)]';
 
-  if (step === ACCOUNT_STEP) return <p className={className}>{t.accountFooter}</p>;
-  if (step === TAX_STEP) return <p className={className}>{t.taxFooter}</p>;
-  if (step === PRODUCT_STEP) return <p className={className}>{t.productFooter}</p>;
-
+  if (step !== ACCOUNT_STEP) {
+    return <PublicHeading title={t.brandingTitle} subtitle={t.brandingSubtitle} />;
+  }
   return (
-    <p className={className}>
-      {t.brandingFooterStart}
-      <b className="font-semibold text-[var(--accent-text)]">{t.brandingFooterHighlight}</b>
-      {t.brandingFooterEnd}
-    </p>
+    <PublicHeading
+      title={t.accountTitle}
+      subtitle={hasAccount ? t.storeOnlySubtitle : t.accountSubtitle}
+    />
   );
 }
 
-function CurrentStep({
-  wizard,
-  product,
-}: {
-  wizard: ReturnType<typeof useWizard>;
-  product: ReturnType<typeof useProductDraft>;
-}) {
-  if (wizard.step === ACCOUNT_STEP) {
-    return <AccountStep values={wizard.form} errors={wizard.errors} onChange={wizard.setField} />;
-  }
-  if (wizard.step === TAX_STEP) {
-    return <TaxStep values={wizard.form} errors={wizard.errors} onChange={wizard.setField} />;
-  }
-  if (wizard.step === PRODUCT_STEP) {
+function Footer({ step, hasAccount }: { step: number; hasAccount: boolean }) {
+  const t = strings.onboarding;
+
+  if (step !== ACCOUNT_STEP) {
     return (
-      <ProductStep
-        draft={product.draft}
-        onChange={product.setField}
-        onAddPhoto={product.addPhoto}
-        onRemovePhoto={product.removePhoto}
-      />
+      <PublicNote>
+        {t.brandingFooterStart}
+        <b className="font-semibold text-[var(--accent-text)]">{t.brandingFooterHighlight}</b>
+        {t.brandingFooterEnd}
+      </PublicNote>
     );
   }
-  return <BrandingStep values={wizard.form} errors={wizard.errors} onChange={wizard.setField} />;
+  if (hasAccount) return <PublicNote>{t.accountFooter}</PublicNote>;
+
+  return (
+    <PublicNote>
+      {t.accountFooter} {t.haveAccountStart}
+      <PublicNoteLink href="/login">{t.haveAccountLink}</PublicNoteLink>
+    </PublicNote>
+  );
 }
 
-export function Wizard() {
-  const wizard = useWizard();
-  const product = useProductDraft();
+export function Wizard({
+  hasAccount,
+  storeUlid,
+}: {
+  hasAccount: boolean;
+  storeUlid: string | null;
+}) {
+  const wizard = useWizard({ hasAccount, storeUlid });
 
   return (
     <>
       <StepBar steps={STEPS} currentStep={wizard.step} />
-      <Heading heading={HEADINGS.at(wizard.step)} />
+      <Heading step={wizard.step} hasAccount={wizard.hasAccount} />
 
       {wizard.alertMessage !== null && <AlertMessage text={wizard.alertMessage} />}
 
-      <CurrentStep wizard={wizard} product={product} />
+      {wizard.step === ACCOUNT_STEP ? (
+        <AccountStep
+          values={wizard.form}
+          errors={wizard.errors}
+          hasAccount={wizard.hasAccount}
+          onChange={wizard.setField}
+        />
+      ) : (
+        <BrandingStep values={wizard.form} errors={wizard.errors} onChange={wizard.setField} />
+      )}
 
       <WizardNavigation
-        canGoBack={wizard.canGoBack}
-        canSkip={wizard.canSkip}
         isLastStep={wizard.isLastStep}
         isSaving={wizard.isSaving}
-        onBack={wizard.goBack}
         onNext={wizard.goNext}
         onFinish={wizard.finish}
         onSkip={wizard.skip}
       />
 
-      <Footer step={wizard.step} />
+      <Footer step={wizard.step} hasAccount={wizard.hasAccount} />
     </>
   );
 }

@@ -14,9 +14,3 @@ export const BRAND_COLORS: readonly [BrandColor, ...BrandColor[]] = [
   { hex: '#D98A2B', token: '--av-orange', label: strings.brandColors.orange },
   { hex: '#3B7DD8', token: '--av-blue', label: strings.brandColors.blue },
 ];
-
-export const MAX_PRODUCT_PHOTOS = 8;
-
-export function nextPhotoToken(count: number): string {
-  return BRAND_COLORS[count % BRAND_COLORS.length]?.token ?? BRAND_COLORS[0].token;
-}

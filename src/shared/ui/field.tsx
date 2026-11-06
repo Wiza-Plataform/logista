@@ -23,11 +23,14 @@ function FieldLabel({
   );
 }
 
+export type FieldVariant = 'form' | 'auth';
+
 export function Field({
   label,
   hint,
   isRequired = false,
   isGroup = false,
+  variant = 'form',
   adornment,
   error,
   children,
@@ -36,6 +39,7 @@ export function Field({
   hint?: string;
   isRequired?: boolean;
   isGroup?: boolean;
+  variant?: FieldVariant;
   adornment?: ReactNode;
   error?: string | undefined;
   children: ReactNode;
@@ -43,7 +47,7 @@ export function Field({
   const heading = <FieldLabel label={label} hint={hint} isRequired={isRequired} />;
 
   return (
-    <div className="mb-3.5 last:mb-0">
+    <div className={cn('last:mb-0', variant === 'auth' ? 'mb-3.75' : 'mb-3.5')}>
       <div className="relative">
         {isGroup ? (
           <div role="group" aria-label={label}>
@@ -101,18 +105,6 @@ export function FieldPair({ children }: { children: ReactNode }) {
   return <div className="grid grid-cols-2 gap-3">{children}</div>;
 }
 
-export function NativeSelect({
-  className,
-  ...props
-}: React.ComponentProps<'select'> & { className?: string }) {
-  return (
-    <select
-      {...props}
-      className={cn(inputVariants({ variant: 'form' }), 'cursor-pointer', className)}
-    />
-  );
-}
-
 export function Textarea({
   className,
   ...props
@@ -133,6 +125,7 @@ export function InputAffix({
   prefix,
   suffix,
   isInvalid = false,
+  className,
   ...props
 }: Omit<React.ComponentProps<'input'>, 'prefix'> & {
   prefix?: string;
@@ -146,6 +139,7 @@ export function InputAffix({
         isInvalid
           ? 'border-destructive'
           : 'border-border focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/15',
+        className,
       )}
     >
       {prefix !== undefined && (

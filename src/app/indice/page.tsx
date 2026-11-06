@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import { GroupSection } from '@/features/screen-index/group-section';
 import { screenGroups } from '@/features/screen-index/screens';
 import { strings } from '@/shared/i18n/strings';
+import { BrandSymbol } from '@/shared/shell/brand-symbol';
 import { THEME_COOKIE, type Theme, themeFromCookie } from '@/shared/shell/theme';
 import { ThemeToggle } from '@/shared/shell/theme-toggle';
 
@@ -12,11 +13,7 @@ export const metadata: Metadata = { title: strings.screenIndex.pageTitle };
 function Wordmark() {
   return (
     <div className="flex items-center gap-2.75">
-      <div className="grid size-10.5 place-items-center rounded-[12px] bg-[var(--lima)]">
-        <span className="mt-0.5 font-[family-name:var(--font-sansita)] text-h1 text-[var(--verde-primario)]">
-          W
-        </span>
-      </div>
+      <BrandSymbol className="size-10.5" />
       <div>
         <div className="bg-[image:var(--brand-grad)] bg-clip-text font-[family-name:var(--font-sansita)] text-[28px] leading-none text-transparent">
           {strings.screenIndex.brand}
