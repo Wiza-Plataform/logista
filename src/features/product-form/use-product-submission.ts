@@ -6,6 +6,7 @@ import { useState, useTransition } from 'react';
 import type { ProductDetails } from '@/shared/contracts/catalog/product';
 import { useToast } from '@/shared/feedback/toaster';
 import type { FormFailure } from '@/shared/forms/form-failure';
+import { imageFormOf } from '@/shared/forms/image-file';
 import { strings } from '@/shared/i18n/strings';
 
 import {
@@ -17,7 +18,6 @@ import { buildProduct } from './build-product';
 import type { ProductDraft } from './draft';
 import { confirmationOf, transitionOf } from './form-intent';
 import type { FormIntent } from './form-intent';
-import { photoFormOf } from './photo-rules';
 import type { PhotoQueue } from './use-photo-queue';
 
 const text = strings.productForm;
@@ -40,7 +40,7 @@ export function useProductSubmission(
   async function uploadQueuedPhotos(productUlid: string): Promise<string | null> {
     if (product !== null) return null;
     for (const photo of queue.photos) {
-      const result = await uploadProductImageAction(productUlid, photoFormOf(photo.file));
+      const result = await uploadProductImageAction(productUlid, imageFormOf(photo.file));
       if (result.status === 'failed') return result.message;
     }
     return null;

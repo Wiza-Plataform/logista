@@ -1,3 +1,5 @@
+import { storeEditorStrings } from './store-editor-strings.ts';
+
 export const strings = {
   app: {
     name: 'WIZA',
@@ -12,6 +14,7 @@ export const strings = {
     categories: 'Categorias',
     stock: 'Stock',
     units: 'Unidades',
+    customizeStore: 'Personalizar loja',
     mainMenu: 'Menu principal',
     signOut: 'Terminar sessão',
   },
@@ -351,13 +354,14 @@ export const strings = {
     offline: 'Não foi possível falar com a Wiza. Verifique a ligação e tente outra vez.',
     unexpected: 'Algo correu mal. Tente outra vez daqui a pouco.',
   },
-  brandColors: {
-    red: 'Vermelho',
-    green: 'Verde',
-    purple: 'Roxo',
-    teal: 'Turquesa',
-    orange: 'Laranja',
-    blue: 'Azul',
+  storeEditor: storeEditorStrings,
+  themePalettes: {
+    lime: 'Lima',
+    coral: 'Coral',
+    forest: 'Floresta',
+    ocean: 'Oceano',
+    plum: 'Ameixa',
+    sand: 'Areia',
   },
   publicShell: {
     brand: 'Wiza',
@@ -467,9 +471,9 @@ export const strings = {
 
     brandingTitle: 'Identidade visual',
     brandingSubtitle: 'Dê cara à sua loja. Pode mudar tudo depois nas definições.',
-    primaryColor: 'Cor primária',
-    storeDescription: 'Descrição da loja',
-    storeDescriptionPlaceholder: 'Doces artesanais feitos em Luanda, entregas em 24h.',
+    palette: 'Paleta',
+    tagline: 'Frase de apresentação',
+    taglinePlaceholder: 'Doces artesanais feitos em Luanda, entregas em 24h.',
     brandingFooterStart: 'Regras de entrega, conta para repasses e publicação ficam em ',
     brandingFooterHighlight: 'Definições',
     brandingFooterEnd: ', dentro do painel.',

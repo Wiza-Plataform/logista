@@ -46,13 +46,9 @@ export async function createStore(payload: CreateStoreRequest): Promise<Store> {
 export async function saveBranding(
   storeUlid: string,
   payload: UpdateBrandingRequest,
-): Promise<Store> {
+): Promise<void> {
   if (!ulidSchema.safeParse(storeUlid).success) {
     throw new ApiError(0, undefined, strings.apiErrors.unexpected);
   }
-  const body = { description: payload.description, primaryColor: payload.primaryColor };
-  return parseResponse(
-    storeSchema,
-    await apiRequest(`/stores/${storeUlid}/branding`, { method: 'PATCH', body }),
-  );
+  await apiRequest(`/stores/${storeUlid}/branding`, { method: 'PATCH', body: payload });
 }

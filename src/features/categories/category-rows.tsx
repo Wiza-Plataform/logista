@@ -1,12 +1,12 @@
 import { IconButton } from '@/shared/blocks/icon-button';
 import type { CategoryNode } from '@/shared/contracts/catalog/category';
+import type { DragBindings, GripKeyHandler } from '@/shared/forms/use-drag-order';
 import { strings } from '@/shared/i18n/strings';
 import { cn } from '@/shared/lib/utils';
 import { Eye, EyeCrossed, Folder, Grip, Pencil, SubArrow } from '@/shared/ui/icons';
 
 import { categoryColorOf } from './category-color';
 import { addressLine, productCountLabel } from './category-labels';
-import type { DragBindings, GripKeyHandler } from './use-sibling-order';
 
 const text = strings.categories;
 

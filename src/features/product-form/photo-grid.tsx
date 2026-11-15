@@ -1,7 +1,8 @@
+import { ACCEPTED_IMAGE_TYPES } from '@/shared/forms/image-file';
 import { strings } from '@/shared/i18n/strings';
 import { Close, Plus } from '@/shared/ui/icons';
 
-import { ACCEPTED_PHOTO_TYPES, MAX_PHOTOS } from './photo-rules';
+import { MAX_PHOTOS } from './photo-rules';
 
 const text = strings.productForm;
 
@@ -94,7 +95,7 @@ function AddPhotoTile({
         type="file"
         multiple
         disabled={isBusy}
-        accept={ACCEPTED_PHOTO_TYPES.join(',')}
+        accept={ACCEPTED_IMAGE_TYPES.join(',')}
         className="sr-only"
         onChange={(event) => {
           onAdd([...(event.currentTarget.files ?? [])]);

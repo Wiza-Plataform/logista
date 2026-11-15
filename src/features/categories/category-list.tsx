@@ -1,11 +1,11 @@
 'use client';
 
 import type { CategoryNode } from '@/shared/contracts/catalog/category';
+import { useDragOrder } from '@/shared/forms/use-drag-order';
 import { cn } from '@/shared/lib/utils';
 
 import { CategoryRow, SubcategoryRow } from './category-rows';
 import type { CategoryRowActions } from './category-rows';
-import { useSiblingOrder } from './use-sibling-order';
 
 export interface CategoryListActions extends CategoryRowActions {
   readonly onReorder: (parentCategoryUlid: string | null, categoryUlids: readonly string[]) => void;
@@ -31,7 +31,7 @@ export function CategoryList({
   depth,
   actions,
 }: CategoryListProps) {
-  const order = useSiblingOrder(
+  const order = useDragOrder(
     categories.map((category) => category.categoryUlid),
     (categoryUlids) => {
       actions.onReorder(parentCategoryUlid, categoryUlids);
@@ -48,7 +48,7 @@ export function CategoryList({
         >
           <Row
             category={category}
-            isDragging={order.draggedUlid === category.categoryUlid}
+            isDragging={order.draggedId === category.categoryUlid}
             dragBindings={order.dragBindingsFor(category.categoryUlid)}
             onGripKeyDown={order.keyDownFor(category.categoryUlid)}
             actions={actions}

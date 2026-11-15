@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 
 import type { ProductDetails } from '@/shared/contracts/catalog/product';
 import { useToast } from '@/shared/feedback/toaster';
+import { imageFormOf } from '@/shared/forms/image-file';
 import { strings } from '@/shared/i18n/strings';
 
 import {
@@ -13,7 +14,7 @@ import {
 } from './actions';
 import { FormSection } from './form-section';
 import { PhotoGrid } from './photo-grid';
-import { photoFormOf, selectPhotos } from './photo-rules';
+import { selectPhotos } from './photo-rules';
 import type { ProductChangeResult } from './product-action-result';
 import type { PhotoQueue } from './use-photo-queue';
 
@@ -64,7 +65,7 @@ function useSavedPhotos(product: ProductDetails) {
     setUploadingCount(selected.length);
     startTransition(async () => {
       for (const [index, file] of selected.entries()) {
-        const result = await uploadProductImageAction(product.productUlid, photoFormOf(file));
+        const result = await uploadProductImageAction(product.productUlid, imageFormOf(file));
         setUploadingCount(selected.length - index - 1);
         if (!settle(result, text.photoAdded)) break;
       }

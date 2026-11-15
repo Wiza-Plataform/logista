@@ -1,7 +1,7 @@
 import type { Route } from 'next';
 
 import { strings } from '@/shared/i18n/strings';
-import { Box, Grid, type Icon } from '@/shared/ui/icons';
+import { Box, Grid, type Icon, Palette } from '@/shared/ui/icons';
 
 export interface NavLink {
   readonly href: Route;
@@ -38,6 +38,7 @@ export const mainNav: readonly NavEntry[] = [
       { href: '/produtos/unidades', label: strings.nav.units },
     ],
   },
+  { kind: 'link', href: '/personalizar', label: strings.nav.customizeStore, icon: Palette },
 ];
 
 export function isInSection(pathname: string, section: NavSectionEntry): boolean {

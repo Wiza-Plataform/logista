@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import type { DragEvent, KeyboardEvent } from 'react';
 
-import { droppedOn, movedBy } from './category-tree';
+import { droppedOn, movedBy } from './drag-order';
 
 const MOVE_UP = -1;
 const MOVE_DOWN = 1;
@@ -25,11 +25,8 @@ function offsetOf(key: string): number {
   return STAY;
 }
 
-export function useSiblingOrder(
-  categoryUlids: readonly string[],
-  onReorder: (categoryUlids: readonly string[]) => void,
-) {
-  const [draggedUlid, setDraggedUlid] = useState<string | null>(null);
+export function useDragOrder(ids: readonly string[], onReorder: (ids: readonly string[]) => void) {
+  const [draggedId, setDraggedId] = useState<string | null>(null);
   const movedGrip = useRef<HTMLButtonElement | null>(null);
 
   useLayoutEffect(() => {
@@ -37,41 +34,41 @@ export function useSiblingOrder(
     movedGrip.current = null;
   });
 
-  function dragBindingsFor(categoryUlid: string): DragBindings {
+  function dragBindingsFor(id: string): DragBindings {
     return {
       draggable: true,
       onDragStart: (event) => {
         event.dataTransfer.effectAllowed = 'move';
-        event.dataTransfer.setData('text/plain', categoryUlid);
-        setDraggedUlid(categoryUlid);
+        event.dataTransfer.setData('text/plain', id);
+        setDraggedId(id);
       },
       onDragEnd: () => {
-        setDraggedUlid(null);
+        setDraggedId(null);
       },
       onDragOver: (event) => {
-        if (draggedUlid !== null) event.preventDefault();
+        if (draggedId !== null) event.preventDefault();
       },
       onDrop: (event) => {
-        if (draggedUlid === null) return;
+        if (draggedId === null) return;
         event.preventDefault();
-        setDraggedUlid(null);
-        const reordered = droppedOn(categoryUlids, draggedUlid, categoryUlid);
+        setDraggedId(null);
+        const reordered = droppedOn(ids, draggedId, id);
         if (reordered !== null) onReorder(reordered);
       },
     };
   }
 
-  function keyDownFor(categoryUlid: string): GripKeyHandler {
+  function keyDownFor(id: string): GripKeyHandler {
     return (event) => {
       const offset = offsetOf(event.key);
       if (offset === STAY) return;
       event.preventDefault();
-      const reordered = movedBy(categoryUlids, categoryUlid, offset);
+      const reordered = movedBy(ids, id, offset);
       if (reordered === null) return;
       movedGrip.current = event.currentTarget;
       onReorder(reordered);
     };
   }
 
-  return { draggedUlid, dragBindingsFor, keyDownFor };
+  return { draggedId, dragBindingsFor, keyDownFor };
 }

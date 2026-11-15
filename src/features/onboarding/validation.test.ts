@@ -74,7 +74,7 @@ test('api fields land on the form field of the same name', () => {
   assert.equal(toFormField('name'), 'name');
   assert.equal(toFormField('phone'), 'phone');
   assert.equal(toFormField('fullName'), 'fullName');
-  assert.equal(toFormField('primaryColor'), 'primaryColor');
+  assert.equal(toFormField('palette'), 'palette');
 });
 
 test('an unknown field is not mapped — it becomes a general alert, not a field error', () => {

@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
+import type { UpdateBrandingRequest } from '@/shared/contracts/store';
+
 import { saveBrandingAction, startStoreAction } from './actions';
 import { toFieldMessages } from './error-messages';
 import type { StartStoreInput, StoreForm } from './types';
@@ -27,7 +29,15 @@ function startInputOf(form: StoreForm, hasAccount: boolean): StartStoreInput {
 }
 
 function hasNoBranding(form: StoreForm): boolean {
-  return form.description.trim() === '' && form.primaryColor === '';
+  return form.tagline.trim() === '' && form.palette === '';
+}
+
+function brandingOf(form: StoreForm): UpdateBrandingRequest {
+  const tagline = form.tagline.trim();
+  return {
+    ...(tagline === '' ? {} : { tagline }),
+    ...(form.palette === '' ? {} : { palette: form.palette }),
+  };
 }
 
 export function useWizard(initial: { hasAccount: boolean; storeUlid: string | null }) {
@@ -58,11 +68,7 @@ export function useWizard(initial: { hasAccount: boolean; storeUlid: string | nu
   }
 
   async function saveBranding(ulid: string) {
-    const description = formState.form.description.trim();
-    const saved = await saveBrandingAction(ulid, {
-      description: description === '' ? null : description,
-      primaryColor: formState.form.primaryColor === '' ? null : formState.form.primaryColor,
-    });
+    const saved = await saveBrandingAction(ulid, brandingOf(formState.form));
     if (!saved.ok) {
       formState.fail(saved, goToFirstStep);
       return;

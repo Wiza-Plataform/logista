@@ -103,30 +103,3 @@ export function parentChoicesFor(
     })
     .map(({ node, path }) => ({ categoryUlid: node.categoryUlid, path }));
 }
-
-export function movedBy(
-  categoryUlids: readonly string[],
-  categoryUlid: string,
-  offset: number,
-): readonly string[] | null {
-  const from = categoryUlids.indexOf(categoryUlid);
-  const to = from + offset;
-  if (from === -1 || to < 0 || to >= categoryUlids.length) return null;
-
-  const reordered = categoryUlids.filter((ulid) => ulid !== categoryUlid);
-  reordered.splice(to, 0, categoryUlid);
-  return reordered;
-}
-
-export function droppedOn(
-  categoryUlids: readonly string[],
-  draggedUlid: string,
-  targetUlid: string,
-): readonly string[] | null {
-  if (draggedUlid === targetUlid) return null;
-  return movedBy(
-    categoryUlids,
-    draggedUlid,
-    categoryUlids.indexOf(targetUlid) - categoryUlids.indexOf(draggedUlid),
-  );
-}

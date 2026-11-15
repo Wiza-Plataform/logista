@@ -5,11 +5,11 @@ import { productDetailsSchema } from '@/shared/contracts/catalog/product';
 import type { ProductDetails, SaveProductRequest } from '@/shared/contracts/catalog/product';
 import { unitListSchema } from '@/shared/contracts/catalog/unit';
 import { ulidSchema } from '@/shared/contracts/ulid';
+import { imageFormOf } from '@/shared/forms/image-file';
 import { strings } from '@/shared/i18n/strings';
 import { getCurrentStore } from '@/shared/session/api';
 
 import type { CategoryChoice, FormChoices } from './form-choices';
-import { photoFormOf } from './photo-rules';
 import type { LifecycleTransition } from './product-action-result';
 
 const NOT_FOUND = 404;
@@ -117,7 +117,7 @@ export async function uploadProductImage(
 ): Promise<void> {
   await apiRequest(`${productPath(storeUlid, productUlid)}/images`, {
     method: 'POST',
-    form: photoFormOf(image),
+    form: imageFormOf(image),
     timeoutMs: UPLOAD_TIMEOUT_MS,
   });
 }

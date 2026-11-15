@@ -7,6 +7,7 @@ import { failedActionOf, rejectedInput } from '@/shared/api/action-failure';
 import type { ProductDetails, ProductVariant } from '@/shared/contracts/catalog/product';
 import { ulidSchema } from '@/shared/contracts/ulid';
 import type { FailedAction } from '@/shared/forms/form-failure';
+import { IMAGE_FIELD, isAcceptedImage } from '@/shared/forms/image-file';
 import { strings } from '@/shared/i18n/strings';
 import { requireStoreUlid } from '@/shared/session/guards';
 
@@ -19,7 +20,7 @@ import {
   updateProduct,
   uploadProductImage,
 } from './api';
-import { isAcceptedPhoto, MAX_PHOTOS, PHOTO_FIELD } from './photo-rules';
+import { MAX_PHOTOS } from './photo-rules';
 import { PRODUCTS_PATH } from './product-action-result';
 import type {
   InitialStockEntry,
@@ -135,7 +136,7 @@ async function applyChange(
 }
 
 function rejectedPhoto(): FailedAction {
-  return { status: 'failed', message: strings.productForm.photoRejected, field: PHOTO_FIELD };
+  return { status: 'failed', message: strings.productForm.photoRejected, field: IMAGE_FIELD };
 }
 
 export async function saveProductAction(input: SaveProductInput): Promise<SaveProductResult> {
@@ -164,8 +165,8 @@ export async function uploadProductImageAction(
   productUlid: string,
   form: FormData,
 ): Promise<ProductChangeResult> {
-  const image = form.get(PHOTO_FIELD);
-  if (!(image instanceof File) || !isAcceptedPhoto(image)) return rejectedPhoto();
+  const image = form.get(IMAGE_FIELD);
+  if (!(image instanceof File) || !isAcceptedImage(image)) return rejectedPhoto();
 
   return applyChange((storeUlid) => uploadProductImage(storeUlid, productUlid, image));
 }

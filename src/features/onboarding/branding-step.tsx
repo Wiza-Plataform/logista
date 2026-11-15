@@ -3,10 +3,12 @@
 import { strings } from '@/shared/i18n/strings';
 import { Field, FieldGroup, Textarea } from '@/shared/ui/field';
 
-import { ColorSwatches } from './color-swatches';
+import { PaletteSwatches } from './palette-swatches';
 import type { FieldMessages, StoreForm, StoreFormField } from './types';
 
-export type BrandingValues = Pick<StoreForm, 'description' | 'primaryColor'>;
+export type BrandingValues = Pick<StoreForm, 'tagline' | 'palette'>;
+
+const TAGLINE_MAX_LENGTH = 160;
 
 interface BrandingStepProps {
   values: BrandingValues;
@@ -19,22 +21,22 @@ export function BrandingStep({ values, errors, onChange }: BrandingStepProps) {
 
   return (
     <FieldGroup>
-      <Field label={t.primaryColor} isGroup error={errors.primaryColor}>
-        <ColorSwatches
-          selected={values.primaryColor}
-          onSelect={(hex) => {
-            onChange('primaryColor', hex);
+      <Field label={t.palette} isGroup error={errors.palette}>
+        <PaletteSwatches
+          selected={values.palette}
+          onSelect={(palette) => {
+            onChange('palette', palette);
           }}
         />
       </Field>
 
-      <Field label={t.storeDescription} error={errors.description}>
+      <Field label={t.tagline} error={errors.tagline}>
         <Textarea
-          value={values.description}
-          maxLength={500}
-          placeholder={t.storeDescriptionPlaceholder}
+          value={values.tagline}
+          maxLength={TAGLINE_MAX_LENGTH}
+          placeholder={t.taglinePlaceholder}
           onChange={(event) => {
-            onChange('description', event.target.value);
+            onChange('tagline', event.target.value);
           }}
         />
       </Field>
